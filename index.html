@@ -94,10 +94,10 @@
             transform: translateY(0);
         }
 
-        .level-display {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.1) 100%);
-            border: 2px solid #10b981;
-            box-shadow: 0 0 30px rgba(16, 185, 129, 0.3), inset 0 0 20px rgba(16, 185, 129, 0.1);
+        .profile-section {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
+            border: 2px solid rgba(16, 185, 129, 0.3);
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.2), inset 0 0 20px rgba(16, 185, 129, 0.05);
         }
 
         .pulse-glow {
@@ -179,120 +179,250 @@
         .tag-intelligence { background: rgba(56, 189, 248, 0.2); color: #38bdf8; }
         .tag-strength { background: rgba(244, 114, 182, 0.2); color: #f472b6; }
         .tag-discipline { background: rgba(167, 139, 250, 0.2); color: #a78bfa; }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid #10b981;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+            object-fit: cover;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .profile-avatar:hover {
+            box-shadow: 0 0 40px rgba(16, 185, 129, 0.6);
+            transform: scale(1.05);
+        }
+
+        .avatar-upload-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            cursor: pointer;
+        }
+
+        .avatar-container:hover .avatar-upload-overlay {
+            opacity: 1;
+        }
+
+        .tasks-container {
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        @media (min-width: 1024px) {
+            .main-layout {
+                display: grid;
+                grid-template-columns: 320px 1fr;
+                gap: 2rem;
+                align-items: start;
+            }
+
+            .profile-sidebar {
+                position: sticky;
+                top: 1.5rem;
+            }
+        }
+
+        .level-ring {
+            position: relative;
+            width: 140px;
+            height: 140px;
+        }
+
+        .level-ring svg {
+            transform: rotate(-90deg);
+        }
+
+        .level-ring-bg {
+            fill: none;
+            stroke: #1e293b;
+            stroke-width: 8;
+        }
+
+        .level-ring-progress {
+            fill: none;
+            stroke: url(#levelGradient);
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100 grid-bg">
     <div class="scan-line"></div>
 
-    <div class="container mx-auto px-4 py-6 max-w-2xl">
+    <div class="container mx-auto px-4 py-6 max-w-7xl">
         <!-- Header -->
-        <header class="text-center mb-8">
+        <header class="text-center mb-8 lg:mb-6">
             <h1 class="cyber-title text-3xl md:text-4xl font-black text-emerald-400 mb-2 tracking-wider">
                 QUEST LOG
             </h1>
             <p class="text-slate-400 text-sm tracking-widest uppercase">Level Up Your Life</p>
         </header>
 
-        <!-- Level & XP Display -->
-        <div class="level-display cyber-card rounded-2xl p-6 mb-6 pulse-glow">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-slate-800 border-4 border-emerald-500 flex items-center justify-center">
-                        <span class="cyber-title text-2xl md:text-3xl font-black text-emerald-400" id="level-number">1</span>
+        <!-- Main Layout: Profile Left, Tasks Right -->
+        <div class="main-layout">
+            <!-- Left Sidebar: Profile Section -->
+            <aside class="profile-sidebar mb-6 lg:mb-0">
+                <div class="profile-section cyber-card rounded-2xl p-6">
+                    <!-- Profile Picture -->
+                    <div class="flex flex-col items-center mb-6">
+                        <div class="avatar-container relative mb-4">
+                            <div class="level-ring">
+                                <svg width="140" height="140" viewBox="0 0 140 140">
+                                    <defs>
+                                        <linearGradient id="levelGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#10b981"/>
+                                            <stop offset="50%" stop-color="#34d399"/>
+                                            <stop offset="100%" stop-color="#6ee7b7"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <circle class="level-ring-bg" cx="70" cy="70" r="62"/>
+                                    <circle class="level-ring-progress" cx="70" cy="70" r="62"
+                                        stroke-dasharray="389.56"
+                                        stroke-dashoffset="389.56"
+                                        id="level-ring-progress"/>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <img id="profile-avatar"
+                                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%231e293b'/%3E%3Ccircle cx='50' cy='35' r='18' fill='%2310b981'/%3E%3Cellipse cx='50' cy='75' rx='28' ry='20' fill='%2310b981'/%3E%3C/svg%3E"
+                                        alt="Profile Avatar"
+                                        class="profile-avatar w-28 h-28"
+                                        onclick="document.getElementById('avatar-input').click()">
+                                    <div class="avatar-upload-overlay w-28 h-28" onclick="document.getElementById('avatar-input').click()">
+                                        <i data-lucide="camera" class="w-8 h-8 text-emerald-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="file" id="avatar-input" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)">
+                        </div>
+
+                        <!-- Level Display -->
+                        <div class="text-center">
+                            <p class="text-slate-400 text-xs uppercase tracking-widest mb-1">Level</p>
+                            <p class="cyber-title text-4xl font-black text-emerald-400" id="level-number">0</p>
+                            <p class="cyber-title text-lg text-emerald-400 font-bold" id="level-title">INITIATE</p>
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-slate-400 text-xs uppercase tracking-widest">Current Level</p>
-                        <p class="cyber-title text-xl md:text-2xl text-emerald-400 font-bold" id="level-title">INITIATE</p>
+
+                    <!-- XP Display -->
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-slate-400 text-sm">Total XP</span>
+                            <span class="cyber-title text-xl text-emerald-400 font-bold" id="total-xp">0</span>
+                        </div>
+                        <div class="relative">
+                            <div class="flex justify-between text-xs text-slate-500 mb-1">
+                                <span id="current-level-xp">0 XP</span>
+                                <span id="next-level-xp">100 XP</span>
+                            </div>
+                            <div class="h-3 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
+                                <div class="progress-bar h-full rounded-full" id="xp-progress" style="width: 0%"></div>
+                            </div>
+                            <p class="text-center text-xs text-slate-500 mt-1">
+                                <span id="xp-to-next">100</span> XP to next level
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Category Stats -->
+                    <div class="space-y-3 mb-6">
+                        <h3 class="cyber-title text-sm font-bold text-slate-400 tracking-wider uppercase">Attributes</h3>
+
+                        <div class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg">
+                            <div class="w-10 h-10 rounded-lg bg-sky-500/20 flex items-center justify-center">
+                                <i data-lucide="brain" class="w-5 h-5 text-sky-400"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-xs text-slate-400">Intelligence</p>
+                                <p class="cyber-title text-lg font-bold text-sky-400" id="stat-intelligence">0</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg">
+                            <div class="w-10 h-10 rounded-lg bg-pink-500/20 flex items-center justify-center">
+                                <i data-lucide="dumbbell" class="w-5 h-5 text-pink-400"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-xs text-slate-400">Strength</p>
+                                <p class="cyber-title text-lg font-bold text-pink-400" id="stat-strength">0</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg">
+                            <div class="w-10 h-10 rounded-lg bg-violet-500/20 flex items-center justify-center">
+                                <i data-lucide="shield" class="w-5 h-5 text-violet-400"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-xs text-slate-400">Discipline</p>
+                                <p class="cyber-title text-lg font-bold text-violet-400" id="stat-discipline">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="space-y-3">
+                        <button onclick="openAddTaskModal()" class="btn-cyber w-full py-3 px-4 rounded-xl font-bold text-slate-900 flex items-center justify-center gap-2">
+                            <i data-lucide="plus" class="w-5 h-5"></i>
+                            <span>Add Quest</span>
+                        </button>
+                        <button onclick="resetDaily()" class="w-full py-3 px-4 rounded-xl font-bold bg-slate-800 border border-slate-600 text-slate-300 hover:border-emerald-500 hover:text-emerald-400 transition-all flex items-center justify-center gap-2">
+                            <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                            <span>Reset Daily</span>
+                        </button>
                     </div>
                 </div>
-                <div class="text-right">
-                    <p class="text-slate-400 text-xs uppercase tracking-widest">Total XP</p>
-                    <p class="cyber-title text-2xl md:text-3xl text-emerald-400 font-bold" id="total-xp">0</p>
-                </div>
-            </div>
+            </aside>
 
-            <!-- Progress Bar -->
-            <div class="relative">
-                <div class="flex justify-between text-xs text-slate-400 mb-1">
-                    <span id="current-level-xp">0 XP</span>
-                    <span id="next-level-xp">100 XP</span>
-                </div>
-                <div class="h-4 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
-                    <div class="progress-bar h-full rounded-full" id="xp-progress" style="width: 0%"></div>
-                </div>
-                <p class="text-center text-xs text-slate-500 mt-1">
-                    <span id="xp-to-next">100</span> XP to next level
-                </p>
-            </div>
+            <!-- Right Section: Tasks -->
+            <main class="tasks-main">
+                <!-- Active Tasks -->
+                <section class="mb-6">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i data-lucide="swords" class="w-5 h-5 text-emerald-400"></i>
+                        <h2 class="cyber-title text-lg font-bold text-emerald-400 tracking-wider">ACTIVE QUESTS</h2>
+                        <span class="bg-emerald-500/20 text-emerald-400 text-xs px-2 py-0.5 rounded-full" id="active-count">0</span>
+                    </div>
+                    <div id="active-tasks" class="space-y-3">
+                        <!-- Tasks will be rendered here -->
+                    </div>
+                    <div id="no-active-tasks" class="cyber-card rounded-xl p-8 text-center hidden">
+                        <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-3 text-slate-600"></i>
+                        <p class="text-slate-500">No active quests. Add one to begin!</p>
+                    </div>
+                </section>
+
+                <!-- Completed Tasks -->
+                <section>
+                    <div class="flex items-center gap-2 mb-4">
+                        <i data-lucide="trophy" class="w-5 h-5 text-slate-500"></i>
+                        <h2 class="cyber-title text-lg font-bold text-slate-500 tracking-wider">COMPLETED</h2>
+                        <span class="bg-slate-700 text-slate-400 text-xs px-2 py-0.5 rounded-full" id="completed-count">0</span>
+                    </div>
+                    <div id="completed-tasks" class="space-y-3">
+                        <!-- Completed tasks will be rendered here -->
+                    </div>
+                    <div id="no-completed-tasks" class="cyber-card rounded-xl p-6 text-center opacity-50">
+                        <i data-lucide="circle-check" class="w-10 h-10 mx-auto mb-2 text-slate-700"></i>
+                        <p class="text-slate-600 text-sm">Complete quests to see them here</p>
+                    </div>
+                </section>
+
+                <!-- Footer -->
+                <footer class="mt-8 text-center text-slate-600 text-xs">
+                    <p>Keep grinding. Level up. Become legendary.</p>
+                </footer>
+            </main>
         </div>
-
-        <!-- Stats Summary -->
-        <div class="grid grid-cols-3 gap-3 mb-6">
-            <div class="cyber-card rounded-xl p-3 text-center">
-                <i data-lucide="brain" class="w-6 h-6 mx-auto mb-1 text-sky-400"></i>
-                <p class="text-xs text-slate-400">Intelligence</p>
-                <p class="cyber-title text-lg font-bold text-sky-400" id="stat-intelligence">0</p>
-            </div>
-            <div class="cyber-card rounded-xl p-3 text-center">
-                <i data-lucide="dumbbell" class="w-6 h-6 mx-auto mb-1 text-pink-400"></i>
-                <p class="text-xs text-slate-400">Strength</p>
-                <p class="cyber-title text-lg font-bold text-pink-400" id="stat-strength">0</p>
-            </div>
-            <div class="cyber-card rounded-xl p-3 text-center">
-                <i data-lucide="shield" class="w-6 h-6 mx-auto mb-1 text-violet-400"></i>
-                <p class="text-xs text-slate-400">Discipline</p>
-                <p class="cyber-title text-lg font-bold text-violet-400" id="stat-discipline">0</p>
-            </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="flex gap-3 mb-6">
-            <button onclick="openAddTaskModal()" class="btn-cyber flex-1 py-3 px-4 rounded-xl font-bold text-slate-900 flex items-center justify-center gap-2">
-                <i data-lucide="plus" class="w-5 h-5"></i>
-                <span>Add Quest</span>
-            </button>
-            <button onclick="resetDaily()" class="flex-1 py-3 px-4 rounded-xl font-bold bg-slate-800 border border-slate-600 text-slate-300 hover:border-emerald-500 hover:text-emerald-400 transition-all flex items-center justify-center gap-2">
-                <i data-lucide="refresh-cw" class="w-5 h-5"></i>
-                <span>Reset Daily</span>
-            </button>
-        </div>
-
-        <!-- Active Tasks -->
-        <section class="mb-6">
-            <div class="flex items-center gap-2 mb-4">
-                <i data-lucide="swords" class="w-5 h-5 text-emerald-400"></i>
-                <h2 class="cyber-title text-lg font-bold text-emerald-400 tracking-wider">ACTIVE QUESTS</h2>
-                <span class="bg-emerald-500/20 text-emerald-400 text-xs px-2 py-0.5 rounded-full" id="active-count">0</span>
-            </div>
-            <div id="active-tasks" class="space-y-3">
-                <!-- Tasks will be rendered here -->
-            </div>
-            <div id="no-active-tasks" class="cyber-card rounded-xl p-8 text-center hidden">
-                <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-3 text-slate-600"></i>
-                <p class="text-slate-500">No active quests. Add one to begin!</p>
-            </div>
-        </section>
-
-        <!-- Completed Tasks -->
-        <section>
-            <div class="flex items-center gap-2 mb-4">
-                <i data-lucide="trophy" class="w-5 h-5 text-slate-500"></i>
-                <h2 class="cyber-title text-lg font-bold text-slate-500 tracking-wider">COMPLETED</h2>
-                <span class="bg-slate-700 text-slate-400 text-xs px-2 py-0.5 rounded-full" id="completed-count">0</span>
-            </div>
-            <div id="completed-tasks" class="space-y-3">
-                <!-- Completed tasks will be rendered here -->
-            </div>
-            <div id="no-completed-tasks" class="cyber-card rounded-xl p-6 text-center opacity-50">
-                <i data-lucide="circle-check" class="w-10 h-10 mx-auto mb-2 text-slate-700"></i>
-                <p class="text-slate-600 text-sm">Complete quests to see them here</p>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer class="mt-8 text-center text-slate-600 text-xs">
-            <p>Keep grinding. Level up. Become legendary.</p>
-        </footer>
     </div>
 
     <!-- Add Task Modal -->
@@ -397,7 +527,8 @@
                 Strength: 0,
                 Discipline: 0
             },
-            nextTaskId: 100
+            nextTaskId: 100,
+            profileImage: null
         };
 
         // ============================================
@@ -410,7 +541,8 @@
                 totalXP: state.totalXP,
                 categoryXP: state.categoryXP,
                 customTasks: state.tasks.filter(t => t.id >= 100),
-                nextTaskId: state.nextTaskId
+                nextTaskId: state.nextTaskId,
+                profileImage: state.profileImage
             }));
         }
 
@@ -422,13 +554,85 @@
                 state.totalXP = data.totalXP || 0;
                 state.categoryXP = data.categoryXP || { Intelligence: 0, Strength: 0, Discipline: 0 };
                 state.nextTaskId = data.nextTaskId || 100;
+                state.profileImage = data.profileImage || null;
 
                 // Combine default tasks with custom tasks
                 const customTasks = data.customTasks || [];
                 state.tasks = [...DEFAULT_TASKS, ...customTasks];
+
+                // Load profile image if exists
+                if (state.profileImage) {
+                    document.getElementById('profile-avatar').src = state.profileImage;
+                }
             } else {
                 state.tasks = [...DEFAULT_TASKS];
             }
+        }
+
+        // ============================================
+        // PROFILE PICTURE UPLOAD
+        // ============================================
+
+        function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file.');
+                return;
+            }
+
+            // Validate file size (max 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Image size should be less than 2MB.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    // Create canvas to resize image
+                    const canvas = document.createElement('canvas');
+                    const MAX_SIZE = 200;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_SIZE) {
+                            height *= MAX_SIZE / width;
+                            width = MAX_SIZE;
+                        }
+                    } else {
+                        if (height > MAX_SIZE) {
+                            width *= MAX_SIZE / height;
+                            height = MAX_SIZE;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Convert to base64 and save
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                    state.profileImage = dataUrl;
+                    document.getElementById('profile-avatar').src = dataUrl;
+                    saveState();
+
+                    // Celebration
+                    confetti({
+                        particleCount: 50,
+                        spread: 60,
+                        origin: { x: 0.5, y: 0.3 },
+                        colors: ['#10b981', '#34d399', '#6ee7b7']
+                    });
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
         }
 
         // ============================================
@@ -463,6 +667,12 @@
             document.getElementById('next-level-xp').textContent = `${Math.floor(nextLevelXP)} XP`;
             document.getElementById('xp-to-next').textContent = Math.ceil(nextLevelXP - state.totalXP);
             document.getElementById('xp-progress').style.width = `${Math.min(progressPercent, 100)}%`;
+
+            // Update circular progress ring
+            const ring = document.getElementById('level-ring-progress');
+            const circumference = 2 * Math.PI * 62; // r = 62
+            const offset = circumference - (progressPercent / 100) * circumference;
+            ring.style.strokeDashoffset = offset;
 
             // Update category stats
             document.getElementById('stat-intelligence').textContent = state.categoryXP.Intelligence;
