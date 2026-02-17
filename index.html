@@ -176,14 +176,21 @@
             <!-- Tasks -->
             <main class="tasks-main">
                 <div class="tabs-container">
-                    <button class="tab-btn active" onclick="switchTab('daily')"><i data-lucide="sun" class="w-4 h-4 inline mr-1"></i>Daily <span id="daily-count" class="ml-1 text-xs opacity-70">(0)</span></button>
+                    <button class="tab-btn active" onclick="switchTab('today')"><i data-lucide="clock" class="w-4 h-4 inline mr-1"></i>Today <span id="today-count" class="ml-1 text-xs opacity-70">(0)</span></button>
+                    <button class="tab-btn" onclick="switchTab('daily')"><i data-lucide="sun" class="w-4 h-4 inline mr-1"></i>Daily <span id="daily-count" class="ml-1 text-xs opacity-70">(0)</span></button>
                     <button class="tab-btn" onclick="switchTab('weekly')"><i data-lucide="calendar-days" class="w-4 h-4 inline mr-1"></i>Weekly <span id="weekly-count" class="ml-1 text-xs opacity-70">(0)</span></button>
                     <button class="tab-btn" onclick="switchTab('monthly')"><i data-lucide="calendar" class="w-4 h-4 inline mr-1"></i>Monthly <span id="monthly-count" class="ml-1 text-xs opacity-70">(0)</span></button>
                     <button class="tab-btn" onclick="switchTab('completed')"><i data-lucide="trophy" class="w-4 h-4 inline mr-1"></i>Done <span id="completed-count" class="ml-1 text-xs opacity-70">(0)</span></button>
                 </div>
 
+                <!-- Today -->
+                <div id="tab-today" class="tab-content active">
+                    <div class="section-header"><i data-lucide="clock" class="w-5 h-5 text-emerald-400"></i><h2 class="cyber-title text-base font-bold text-emerald-400 tracking-wider">TODAY'S QUESTS</h2></div>
+                    <div id="today-tasks" class="space-y-2"></div>
+                    <div id="no-today-tasks" class="cyber-card rounded-xl p-6 text-center hidden"><i data-lucide="check-circle" class="w-10 h-10 mx-auto mb-2 text-emerald-600"></i><p class="text-slate-500 text-sm">All quests completed for today!</p></div>
+                </div>
                 <!-- Daily -->
-                <div id="tab-daily" class="tab-content active">
+                <div id="tab-daily" class="tab-content">
                     <div class="section-header"><i data-lucide="sun" class="w-5 h-5 text-orange-400"></i><h2 class="cyber-title text-base font-bold text-orange-400 tracking-wider">DAILY QUESTS</h2></div>
                     <div id="daily-tasks" class="space-y-2"></div>
                     <div id="no-daily-tasks" class="cyber-card rounded-xl p-6 text-center hidden"><i data-lucide="sunrise" class="w-10 h-10 mx-auto mb-2 text-slate-600"></i><p class="text-slate-500 text-sm">No daily quests.</p></div>
@@ -321,7 +328,7 @@
         { id:10, title:'Deep clean workspace', category:'Discipline', difficulty:'Medium', frequency:'monthly', deadline:'15:00', dueDate:null },
     ];
 
-    let state = { tasks:[], completedTasks:[], totalXP:0, categoryXP:{Intelligence:0,Strength:0,Discipline:0}, nextTaskId:100, profileImage:null, currentTab:'daily', deletedDefaultIds:[] };
+    let state = { tasks:[], completedTasks:[], totalXP:0, categoryXP:{Intelligence:0,Strength:0,Discipline:0}, nextTaskId:100, profileImage:null, currentTab:'today', deletedDefaultIds:[] };
     let calViewDate = new Date();
     let selectedCalDate = null;
 
@@ -551,6 +558,20 @@
         return task.weekdays && task.weekdays.includes(new Date().getDay());
     }
 
+    function isMonthlyTaskDueToday(task) {
+        if (task.frequency !== 'monthly' || !task.dueDate) return false;
+        const today = new Date();
+        const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+        return task.dueDate === todayStr;
+    }
+
+    function isTaskForToday(task) {
+        if (task.frequency === 'daily') return true;
+        if (task.frequency === 'weekly') return isWeeklyTaskForToday(task);
+        if (task.frequency === 'monthly') return isMonthlyTaskDueToday(task);
+        return false;
+    }
+
     // ============================================
     // RENDER TASKS
     // ============================================
@@ -636,11 +657,13 @@
     }
 
     function renderTasks() {
+        const today = state.tasks.filter(t => isTaskForToday(t));
         const daily = state.tasks.filter(t=>t.frequency==='daily');
         const weekly = state.tasks.filter(t=>t.frequency==='weekly'&&isWeeklyTaskForToday(t));
         const monthly = state.tasks.filter(t=>t.frequency==='monthly');
         const completed = [...state.completedTasks].reverse().slice(0,30);
 
+        renderSection('today-tasks','no-today-tasks', today);
         renderSection('daily-tasks','no-daily-tasks', daily);
         renderSection('weekly-tasks','no-weekly-tasks', weekly);
         renderSection('monthly-tasks','no-monthly-tasks', monthly);
@@ -650,9 +673,11 @@
         if (completed.length > 0) { cc.innerHTML = completed.map(renderCompletedTask).join(''); nc.classList.add('hidden'); }
         else { cc.innerHTML = ''; nc.classList.remove('hidden'); }
 
+        const ta = today.filter(t=>!isTaskCompletedToday(t.id)).length;
         const da = daily.filter(t=>!isTaskCompletedToday(t.id)).length;
         const wa = weekly.filter(t=>!isTaskCompletedToday(t.id)).length;
         const ma = monthly.filter(t=>!isTaskCompletedToday(t.id)).length;
+        document.getElementById('today-count').textContent=`(${ta}/${today.length})`;
         document.getElementById('daily-count').textContent=`(${da}/${daily.length})`;
         document.getElementById('weekly-count').textContent=`(${wa}/${weekly.length})`;
         document.getElementById('monthly-count').textContent=`(${ma}/${monthly.length})`;
