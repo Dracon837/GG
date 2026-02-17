@@ -321,7 +321,7 @@
         { id:10, title:'Deep clean workspace', category:'Discipline', difficulty:'Medium', frequency:'monthly', deadline:'15:00', dueDate:null },
     ];
 
-    let state = { tasks:[], completedTasks:[], totalXP:0, categoryXP:{Intelligence:0,Strength:0,Discipline:0}, nextTaskId:100, profileImage:null, currentTab:'daily' };
+    let state = { tasks:[], completedTasks:[], totalXP:0, categoryXP:{Intelligence:0,Strength:0,Discipline:0}, nextTaskId:100, profileImage:null, currentTab:'daily', deletedDefaultIds:[] };
     let calViewDate = new Date();
     let selectedCalDate = null;
 
@@ -333,7 +333,8 @@
             completedTasks: state.completedTasks.slice(-30),
             totalXP: state.totalXP, categoryXP: state.categoryXP,
             customTasks: state.tasks.filter(t => t.id >= 100),
-            nextTaskId: state.nextTaskId, profileImage: state.profileImage
+            nextTaskId: state.nextTaskId, profileImage: state.profileImage,
+            deletedDefaultIds: state.deletedDefaultIds
         }));
     }
     function loadState() {
@@ -345,7 +346,10 @@
             state.categoryXP = d.categoryXP||{Intelligence:0,Strength:0,Discipline:0};
             state.nextTaskId = d.nextTaskId||100;
             state.profileImage = d.profileImage||null;
-            state.tasks = [...DEFAULT_TASKS, ...(d.customTasks||[])];
+            state.deletedDefaultIds = d.deletedDefaultIds||[];
+            // Filter out deleted default tasks
+            const activeDefaults = DEFAULT_TASKS.filter(t => !state.deletedDefaultIds.includes(t.id));
+            state.tasks = [...activeDefaults, ...(d.customTasks||[])];
             if (state.profileImage) document.getElementById('profile-avatar').src = state.profileImage;
         } else { state.tasks = [...DEFAULT_TASKS]; }
     }
@@ -596,6 +600,9 @@
                         <div class="xp-badge px-2 py-0.5 rounded-full text-xs font-bold text-slate-900">
                             ${done ? `+${xp}` : `+${bonusXP}`} XP
                         </div>
+                        <button onclick="deleteTask(${task.id})" class="mt-1 text-slate-500 hover:text-red-400 transition-colors p-1" title="Delete Quest">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
                     </div>
                 </div>
             </div>`;
@@ -687,6 +694,27 @@
         const newLvl = calculateLevel(state.totalXP);
         triggerConfetti(newLvl > prevLvl, mult.mult);
         saveState(); renderTasks(); updateLevelDisplay();
+    }
+
+    function deleteTask(taskId) {
+        const task = state.tasks.find(t => t.id === taskId);
+        if (!task) return;
+
+        if (!confirm(`Delete quest "${task.title}"?`)) return;
+
+        // Track deleted default tasks so they don't reappear on reload
+        if (taskId < 100 && !state.deletedDefaultIds.includes(taskId)) {
+            state.deletedDefaultIds.push(taskId);
+        }
+
+        // Remove task from tasks array
+        state.tasks = state.tasks.filter(t => t.id !== taskId);
+
+        // Also remove any completed records for this task
+        state.completedTasks = state.completedTasks.filter(ct => ct.taskId !== taskId);
+
+        saveState();
+        renderTasks();
     }
 
     function triggerConfetti(levelUp, multiplier) {
