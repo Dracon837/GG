@@ -11,542 +11,206 @@
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;700&display=swap');
 
         :root {
-            --neon-glow: 0 0 10px rgba(52, 211, 153, 0.5), 0 0 20px rgba(52, 211, 153, 0.3), 0 0 30px rgba(52, 211, 153, 0.2);
-            --cyber-pink: #f472b6;
-            --cyber-blue: #38bdf8;
-            --cyber-purple: #a78bfa;
-            --cyber-orange: #fb923c;
-            --cyber-yellow: #facc15;
+            --neon-glow: 0 0 10px rgba(52,211,153,.5), 0 0 20px rgba(52,211,153,.3), 0 0 30px rgba(52,211,153,.2);
+            --cyber-pink: #f472b6; --cyber-blue: #38bdf8; --cyber-purple: #a78bfa;
+            --cyber-orange: #fb923c; --cyber-yellow: #facc15;
         }
-
-        * {
-            scrollbar-width: thin;
-            scrollbar-color: #10b981 #1e293b;
-        }
-
+        * { scrollbar-width: thin; scrollbar-color: #10b981 #1e293b; }
         *::-webkit-scrollbar { width: 8px; }
         *::-webkit-scrollbar-track { background: #1e293b; }
         *::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
 
-        body {
-            font-family: 'Rajdhani', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-            min-height: 100vh;
+        body { font-family:'Rajdhani',sans-serif; background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%); min-height:100vh; }
+        .cyber-title { font-family:'Orbitron',monospace; text-shadow:var(--neon-glow); }
+        .cyber-card { background:linear-gradient(145deg,rgba(30,41,59,.9) 0%,rgba(15,23,42,.95) 100%); border:1px solid rgba(52,211,153,.2); box-shadow:0 0 20px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.05); }
+        .cyber-card:hover { border-color:rgba(52,211,153,.4); }
+        .progress-bar { background:linear-gradient(90deg,#10b981,#34d399,#6ee7b7); box-shadow:0 0 10px rgba(52,211,153,.5); transition:width .5s ease-out; }
+        .xp-badge { background:linear-gradient(135deg,#10b981,#059669); box-shadow:0 0 12px rgba(16,185,129,.4); }
+        .bonus-badge { background:linear-gradient(135deg,#f59e0b,#d97706); box-shadow:0 0 12px rgba(245,158,11,.5); }
+        .category-intelligence { border-left:4px solid var(--cyber-blue); }
+        .category-strength { border-left:4px solid var(--cyber-pink); }
+        .category-discipline { border-left:4px solid var(--cyber-purple); }
+        .task-completed { opacity:.5; filter:grayscale(50%); }
+        .btn-cyber { background:linear-gradient(135deg,#10b981,#059669); transition:all .3s ease; text-transform:uppercase; letter-spacing:1px; }
+        .btn-cyber:hover { box-shadow:0 0 20px rgba(16,185,129,.5); transform:translateY(-2px); }
+        .btn-cyber:active { transform:translateY(0); }
+        .profile-section { background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(5,150,105,.05)); border:2px solid rgba(16,185,129,.3); box-shadow:0 0 30px rgba(16,185,129,.2),inset 0 0 20px rgba(16,185,129,.05); }
+        .scan-line { position:fixed; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,rgba(52,211,153,.5),transparent); animation:scan 3s linear infinite; pointer-events:none; z-index:100; }
+        @keyframes scan { 0%{top:0;opacity:1} 100%{top:100%;opacity:.3} }
+        .grid-bg { background-image:linear-gradient(rgba(52,211,153,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(52,211,153,.03) 1px,transparent 1px); background-size:50px 50px; }
+
+        .checkbox-cyber { appearance:none; width:24px; height:24px; border:2px solid #10b981; border-radius:4px; cursor:pointer; position:relative; transition:all .3s ease; flex-shrink:0; }
+        .checkbox-cyber:checked { background:#10b981; }
+        .checkbox-cyber:checked::after { content:''; position:absolute; top:2px; left:7px; width:6px; height:12px; border:solid #0f172a; border-width:0 3px 3px 0; transform:rotate(45deg); }
+        .checkbox-cyber:hover { box-shadow:0 0 15px rgba(16,185,129,.5); }
+
+        .difficulty-easy{color:#4ade80} .difficulty-medium{color:#fbbf24} .difficulty-hard{color:#f87171}
+        .category-tag { font-size:.65rem; padding:2px 8px; border-radius:9999px; font-weight:600; letter-spacing:.5px; }
+        .tag-intelligence{background:rgba(56,189,248,.2);color:#38bdf8} .tag-strength{background:rgba(244,114,182,.2);color:#f472b6} .tag-discipline{background:rgba(167,139,250,.2);color:#a78bfa}
+        .freq-tag { font-size:.6rem; padding:2px 6px; border-radius:4px; font-weight:700; letter-spacing:.5px; }
+        .freq-daily{background:rgba(251,146,60,.2);color:#fb923c} .freq-weekly{background:rgba(56,189,248,.2);color:#38bdf8} .freq-monthly{background:rgba(167,139,250,.2);color:#a78bfa}
+
+        .profile-avatar { width:120px; height:120px; border-radius:50%; border:4px solid #10b981; box-shadow:0 0 30px rgba(16,185,129,.4); object-fit:cover; cursor:pointer; transition:all .3s ease; }
+        .profile-avatar:hover { box-shadow:0 0 40px rgba(16,185,129,.6); transform:scale(1.05); }
+        .avatar-upload-overlay { position:absolute; inset:0; background:rgba(0,0,0,.7); border-radius:50%; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .3s ease; cursor:pointer; }
+        .avatar-container:hover .avatar-upload-overlay { opacity:1; }
+
+        @media(min-width:1024px){
+            .main-layout{display:grid;grid-template-columns:300px 1fr;gap:1.5rem;align-items:start}
+            .profile-sidebar{position:sticky;top:1rem}
         }
+        .level-ring { position:relative; width:130px; height:130px; }
+        .level-ring svg { transform:rotate(-90deg); }
+        .level-ring-bg { fill:none; stroke:#1e293b; stroke-width:8; }
+        .level-ring-progress { fill:none; stroke:url(#levelGradient); stroke-width:8; stroke-linecap:round; transition:stroke-dashoffset .5s ease; }
 
-        .cyber-title {
-            font-family: 'Orbitron', monospace;
-            text-shadow: var(--neon-glow);
-        }
+        .section-header { display:flex; align-items:center; gap:.5rem; margin-bottom:.75rem; padding-bottom:.5rem; border-bottom:1px solid rgba(52,211,153,.1); }
+        .day-selector { display:grid; grid-template-columns:repeat(7,1fr); gap:.25rem; }
+        .day-btn { padding:.5rem .25rem; border-radius:.5rem; text-align:center; font-size:.75rem; font-weight:600; cursor:pointer; transition:all .2s; border:2px solid transparent; user-select:none; }
+        .day-btn:hover { background:rgba(52,211,153,.1); }
+        .day-btn.selected { background:rgba(16,185,129,.2); border-color:#10b981; color:#10b981; }
+        .task-days { display:flex; gap:.25rem; flex-wrap:wrap; }
+        .task-day-badge { font-size:.6rem; padding:1px 4px; border-radius:3px; background:rgba(56,189,248,.15); color:#38bdf8; font-weight:600; }
+        .completed-timestamp { font-size:.65rem; color:#64748b; }
 
-        .cyber-card {
-            background: linear-gradient(145deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
-            border: 1px solid rgba(52, 211, 153, 0.2);
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-        }
+        .tabs-container { display:flex; gap:.5rem; margin-bottom:1rem; overflow-x:auto; padding-bottom:.5rem; }
+        .tab-btn { padding:.5rem 1rem; border-radius:.5rem; font-weight:600; font-size:.875rem; white-space:nowrap; transition:all .2s; border:1px solid rgba(52,211,153,.2); background:rgba(30,41,59,.5); color:#94a3b8; }
+        .tab-btn:hover { border-color:rgba(52,211,153,.4); color:#e2e8f0; }
+        .tab-btn.active { background:rgba(16,185,129,.2); border-color:#10b981; color:#10b981; }
+        .tab-content { display:none; }
+        .tab-content.active { display:block; }
 
-        .cyber-card:hover {
-            border-color: rgba(52, 211, 153, 0.4);
-            box-shadow: 0 0 30px rgba(52, 211, 153, 0.1), 0 0 20px rgba(0, 0, 0, 0.5);
-        }
+        .deadline-bar { height:4px; border-radius:2px; background:#334155; overflow:hidden; }
+        .deadline-fill { height:100%; border-radius:2px; transition:width .3s; }
+        .deadline-fill.urgent { background:linear-gradient(90deg,#ef4444,#f87171); }
+        .deadline-fill.warning { background:linear-gradient(90deg,#f59e0b,#fbbf24); }
+        .deadline-fill.good { background:linear-gradient(90deg,#10b981,#34d399); }
 
-        .progress-bar {
-            background: linear-gradient(90deg, #10b981 0%, #34d399 50%, #6ee7b7 100%);
-            box-shadow: 0 0 10px rgba(52, 211, 153, 0.5);
-            transition: width 0.5s ease-out;
-        }
+        .multiplier-badge { font-size:.6rem; padding:1px 5px; border-radius:3px; font-weight:700; letter-spacing:.3px; }
+        .mult-3x { background:rgba(16,185,129,.25); color:#6ee7b7; }
+        .mult-2x { background:rgba(56,189,248,.2); color:#7dd3fc; }
+        .mult-1-5x { background:rgba(250,204,21,.2); color:#fde047; }
+        .mult-1x { background:rgba(148,163,184,.15); color:#94a3b8; }
+        .mult-late { background:rgba(239,68,68,.2); color:#fca5a5; }
 
-        .xp-badge {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
-        }
-
-        .category-intelligence { border-left: 4px solid var(--cyber-blue); }
-        .category-strength { border-left: 4px solid var(--cyber-pink); }
-        .category-discipline { border-left: 4px solid var(--cyber-purple); }
-
-        .task-completed {
-            opacity: 0.5;
-            text-decoration: line-through;
-            filter: grayscale(50%);
-        }
-
-        .btn-cyber {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn-cyber:hover {
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
-            transform: translateY(-2px);
-        }
-
-        .btn-cyber:active { transform: translateY(0); }
-
-        .profile-section {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
-            border: 2px solid rgba(16, 185, 129, 0.3);
-            box-shadow: 0 0 30px rgba(16, 185, 129, 0.2), inset 0 0 20px rgba(16, 185, 129, 0.05);
-        }
-
-        .scan-line {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(52, 211, 153, 0.5), transparent);
-            animation: scan 3s linear infinite;
-            pointer-events: none;
-            z-index: 100;
-        }
-
-        @keyframes scan {
-            0% { top: 0; opacity: 1; }
-            100% { top: 100%; opacity: 0.3; }
-        }
-
-        .grid-bg {
-            background-image:
-                linear-gradient(rgba(52, 211, 153, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(52, 211, 153, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-        }
-
-        .checkbox-cyber {
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            border: 2px solid #10b981;
-            border-radius: 4px;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .checkbox-cyber:checked { background: #10b981; }
-
-        .checkbox-cyber:checked::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 7px;
-            width: 6px;
-            height: 12px;
-            border: solid #0f172a;
-            border-width: 0 3px 3px 0;
-            transform: rotate(45deg);
-        }
-
-        .checkbox-cyber:hover { box-shadow: 0 0 15px rgba(16, 185, 129, 0.5); }
-
-        .difficulty-easy { color: #4ade80; }
-        .difficulty-medium { color: #fbbf24; }
-        .difficulty-hard { color: #f87171; }
-
-        .category-tag {
-            font-size: 0.65rem;
-            padding: 2px 8px;
-            border-radius: 9999px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        .tag-intelligence { background: rgba(56, 189, 248, 0.2); color: #38bdf8; }
-        .tag-strength { background: rgba(244, 114, 182, 0.2); color: #f472b6; }
-        .tag-discipline { background: rgba(167, 139, 250, 0.2); color: #a78bfa; }
-
-        .freq-tag {
-            font-size: 0.6rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .freq-daily { background: rgba(251, 146, 60, 0.2); color: #fb923c; }
-        .freq-weekly { background: rgba(56, 189, 248, 0.2); color: #38bdf8; }
-        .freq-monthly { background: rgba(167, 139, 250, 0.2); color: #a78bfa; }
-
-        .profile-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 4px solid #10b981;
-            box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
-            object-fit: cover;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .profile-avatar:hover {
-            box-shadow: 0 0 40px rgba(16, 185, 129, 0.6);
-            transform: scale(1.05);
-        }
-
-        .avatar-upload-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            cursor: pointer;
-        }
-
-        .avatar-container:hover .avatar-upload-overlay { opacity: 1; }
-
-        @media (min-width: 1024px) {
-            .main-layout {
-                display: grid;
-                grid-template-columns: 300px 1fr;
-                gap: 1.5rem;
-                align-items: start;
-            }
-
-            .profile-sidebar {
-                position: sticky;
-                top: 1rem;
-            }
-        }
-
-        .level-ring {
-            position: relative;
-            width: 130px;
-            height: 130px;
-        }
-
-        .level-ring svg { transform: rotate(-90deg); }
-
-        .level-ring-bg {
-            fill: none;
-            stroke: #1e293b;
-            stroke-width: 8;
-        }
-
-        .level-ring-progress {
-            fill: none;
-            stroke: url(#levelGradient);
-            stroke-width: 8;
-            stroke-linecap: round;
-            transition: stroke-dashoffset 0.5s ease;
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid rgba(52, 211, 153, 0.1);
-        }
-
-        .day-selector {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 0.25rem;
-        }
-
-        .day-btn {
-            padding: 0.5rem 0.25rem;
-            border-radius: 0.5rem;
-            text-align: center;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 2px solid transparent;
-        }
-
-        .day-btn:hover { background: rgba(52, 211, 153, 0.1); }
-
-        .day-btn.selected {
-            background: rgba(16, 185, 129, 0.2);
-            border-color: #10b981;
-            color: #10b981;
-        }
-
-        .task-days {
-            display: flex;
-            gap: 0.25rem;
-            flex-wrap: wrap;
-        }
-
-        .task-day-badge {
-            font-size: 0.6rem;
-            padding: 1px 4px;
-            border-radius: 3px;
-            background: rgba(56, 189, 248, 0.15);
-            color: #38bdf8;
-            font-weight: 600;
-        }
-
-        .completed-timestamp {
-            font-size: 0.65rem;
-            color: #64748b;
-        }
-
-        .tabs-container {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            overflow-x: auto;
-            padding-bottom: 0.5rem;
-        }
-
-        .tab-btn {
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            font-size: 0.875rem;
-            white-space: nowrap;
-            transition: all 0.2s;
-            border: 1px solid rgba(52, 211, 153, 0.2);
-            background: rgba(30, 41, 59, 0.5);
-            color: #94a3b8;
-        }
-
-        .tab-btn:hover {
-            border-color: rgba(52, 211, 153, 0.4);
-            color: #e2e8f0;
-        }
-
-        .tab-btn.active {
-            background: rgba(16, 185, 129, 0.2);
-            border-color: #10b981;
-            color: #10b981;
-        }
-
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+        .cal-header { text-align:center; font-size:.65rem; font-weight:700; color:#64748b; padding:4px 0; }
+        .cal-day { text-align:center; font-size:.75rem; padding:6px 2px; border-radius:6px; cursor:pointer; transition:all .15s; color:#94a3b8; user-select:none; }
+        .cal-day:hover { background:rgba(52,211,153,.15); }
+        .cal-day.today { color:#10b981; font-weight:700; box-shadow:inset 0 0 0 1px #10b981; }
+        .cal-day.selected-day { background:#10b981; color:#0f172a; font-weight:700; }
+        .cal-day.other-month { opacity:.3; }
+        .cal-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:.5rem; }
+        .cal-nav button { background:none; border:none; color:#94a3b8; cursor:pointer; padding:4px 8px; border-radius:4px; }
+        .cal-nav button:hover { color:#10b981; background:rgba(52,211,153,.1); }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100 grid-bg">
     <div class="scan-line"></div>
-
     <div class="container mx-auto px-4 py-4 max-w-7xl">
-        <!-- Header -->
         <header class="text-center mb-6">
-            <h1 class="cyber-title text-2xl md:text-3xl font-black text-emerald-400 mb-1 tracking-wider">
-                QUEST LOG
-            </h1>
+            <h1 class="cyber-title text-2xl md:text-3xl font-black text-emerald-400 mb-1 tracking-wider">QUEST LOG</h1>
             <p class="text-slate-400 text-xs tracking-widest uppercase">Level Up Your Life</p>
         </header>
 
-        <!-- Main Layout -->
         <div class="main-layout">
-            <!-- Left Sidebar: Profile Section -->
+            <!-- Profile Sidebar -->
             <aside class="profile-sidebar mb-4 lg:mb-0">
                 <div class="profile-section cyber-card rounded-2xl p-5">
-                    <!-- Profile Picture -->
                     <div class="flex flex-col items-center mb-5">
                         <div class="avatar-container relative mb-3">
                             <div class="level-ring">
                                 <svg width="130" height="130" viewBox="0 0 130 130">
-                                    <defs>
-                                        <linearGradient id="levelGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                            <stop offset="0%" stop-color="#10b981"/>
-                                            <stop offset="50%" stop-color="#34d399"/>
-                                            <stop offset="100%" stop-color="#6ee7b7"/>
-                                        </linearGradient>
-                                    </defs>
+                                    <defs><linearGradient id="levelGradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#10b981"/><stop offset="50%" stop-color="#34d399"/><stop offset="100%" stop-color="#6ee7b7"/></linearGradient></defs>
                                     <circle class="level-ring-bg" cx="65" cy="65" r="57"/>
-                                    <circle class="level-ring-progress" cx="65" cy="65" r="57"
-                                        stroke-dasharray="358.14"
-                                        stroke-dashoffset="358.14"
-                                        id="level-ring-progress"/>
+                                    <circle class="level-ring-progress" cx="65" cy="65" r="57" stroke-dasharray="358.14" stroke-dashoffset="358.14" id="level-ring-progress"/>
                                 </svg>
                                 <div class="absolute inset-0 flex items-center justify-center">
-                                    <img id="profile-avatar"
-                                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%231e293b'/%3E%3Ccircle cx='50' cy='35' r='18' fill='%2310b981'/%3E%3Cellipse cx='50' cy='75' rx='28' ry='20' fill='%2310b981'/%3E%3C/svg%3E"
-                                        alt="Profile Avatar"
-                                        class="profile-avatar w-24 h-24"
-                                        onclick="document.getElementById('avatar-input').click()">
-                                    <div class="avatar-upload-overlay w-24 h-24" onclick="document.getElementById('avatar-input').click()">
-                                        <i data-lucide="camera" class="w-6 h-6 text-emerald-400"></i>
-                                    </div>
+                                    <img id="profile-avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%231e293b'/%3E%3Ccircle cx='50' cy='35' r='18' fill='%2310b981'/%3E%3Cellipse cx='50' cy='75' rx='28' ry='20' fill='%2310b981'/%3E%3C/svg%3E" alt="Avatar" class="profile-avatar w-24 h-24" onclick="document.getElementById('avatar-input').click()">
+                                    <div class="avatar-upload-overlay w-24 h-24" onclick="document.getElementById('avatar-input').click()"><i data-lucide="camera" class="w-6 h-6 text-emerald-400"></i></div>
                                 </div>
                             </div>
                             <input type="file" id="avatar-input" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)">
                         </div>
-
-                        <!-- Level Display -->
                         <div class="text-center">
                             <p class="text-slate-400 text-xs uppercase tracking-widest mb-1">Level</p>
                             <p class="cyber-title text-3xl font-black text-emerald-400" id="level-number">0</p>
                             <p class="cyber-title text-sm text-emerald-400 font-bold" id="level-title">INITIATE</p>
                         </div>
                     </div>
-
-                    <!-- XP Display -->
                     <div class="mb-5">
                         <div class="flex justify-between items-center mb-2">
                             <span class="text-slate-400 text-sm">Total XP</span>
                             <span class="cyber-title text-lg text-emerald-400 font-bold" id="total-xp">0</span>
                         </div>
                         <div class="relative">
-                            <div class="flex justify-between text-xs text-slate-500 mb-1">
-                                <span id="current-level-xp">0 XP</span>
-                                <span id="next-level-xp">100 XP</span>
-                            </div>
-                            <div class="h-2.5 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
-                                <div class="progress-bar h-full rounded-full" id="xp-progress" style="width: 0%"></div>
-                            </div>
-                            <p class="text-center text-xs text-slate-500 mt-1">
-                                <span id="xp-to-next">100</span> XP to next level
-                            </p>
+                            <div class="flex justify-between text-xs text-slate-500 mb-1"><span id="current-level-xp">0 XP</span><span id="next-level-xp">100 XP</span></div>
+                            <div class="h-2.5 bg-slate-800 rounded-full overflow-hidden border border-slate-700"><div class="progress-bar h-full rounded-full" id="xp-progress" style="width:0%"></div></div>
+                            <p class="text-center text-xs text-slate-500 mt-1"><span id="xp-to-next">100</span> XP to next level</p>
                         </div>
                     </div>
-
-                    <!-- Category Stats -->
                     <div class="space-y-2 mb-5">
                         <h3 class="cyber-title text-xs font-bold text-slate-400 tracking-wider uppercase">Attributes</h3>
-
-                        <div class="flex items-center gap-2 p-2 bg-slate-800/50 rounded-lg">
-                            <div class="w-8 h-8 rounded-lg bg-sky-500/20 flex items-center justify-center">
-                                <i data-lucide="brain" class="w-4 h-4 text-sky-400"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-xs text-slate-400">Intelligence</p>
-                                <p class="cyber-title text-sm font-bold text-sky-400" id="stat-intelligence">0</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center gap-2 p-2 bg-slate-800/50 rounded-lg">
-                            <div class="w-8 h-8 rounded-lg bg-pink-500/20 flex items-center justify-center">
-                                <i data-lucide="dumbbell" class="w-4 h-4 text-pink-400"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-xs text-slate-400">Strength</p>
-                                <p class="cyber-title text-sm font-bold text-pink-400" id="stat-strength">0</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center gap-2 p-2 bg-slate-800/50 rounded-lg">
-                            <div class="w-8 h-8 rounded-lg bg-violet-500/20 flex items-center justify-center">
-                                <i data-lucide="shield" class="w-4 h-4 text-violet-400"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-xs text-slate-400">Discipline</p>
-                                <p class="cyber-title text-sm font-bold text-violet-400" id="stat-discipline">0</p>
-                            </div>
+                        <div class="flex items-center gap-2 p-2 bg-slate-800/50 rounded-lg"><div class="w-8 h-8 rounded-lg bg-sky-500/20 flex items-center justify-center"><i data-lucide="brain" class="w-4 h-4 text-sky-400"></i></div><div class="flex-1"><p class="text-xs text-slate-400">Intelligence</p><p class="cyber-title text-sm font-bold text-sky-400" id="stat-intelligence">0</p></div></div>
+                        <div class="flex items-center gap-2 p-2 bg-slate-800/50 rounded-lg"><div class="w-8 h-8 rounded-lg bg-pink-500/20 flex items-center justify-center"><i data-lucide="dumbbell" class="w-4 h-4 text-pink-400"></i></div><div class="flex-1"><p class="text-xs text-slate-400">Strength</p><p class="cyber-title text-sm font-bold text-pink-400" id="stat-strength">0</p></div></div>
+                        <div class="flex items-center gap-2 p-2 bg-slate-800/50 rounded-lg"><div class="w-8 h-8 rounded-lg bg-violet-500/20 flex items-center justify-center"><i data-lucide="shield" class="w-4 h-4 text-violet-400"></i></div><div class="flex-1"><p class="text-xs text-slate-400">Discipline</p><p class="cyber-title text-sm font-bold text-violet-400" id="stat-discipline">0</p></div></div>
+                    </div>
+                    <!-- XP Bonus Legend -->
+                    <div class="mb-5 p-3 bg-slate-800/50 rounded-lg">
+                        <h3 class="cyber-title text-xs font-bold text-slate-400 tracking-wider uppercase mb-2">Early Bonus</h3>
+                        <div class="space-y-1 text-xs">
+                            <div class="flex justify-between"><span class="multiplier-badge mult-3x">3x</span><span class="text-slate-400">&gt; 75% time left</span></div>
+                            <div class="flex justify-between"><span class="multiplier-badge mult-2x">2x</span><span class="text-slate-400">&gt; 50% time left</span></div>
+                            <div class="flex justify-between"><span class="multiplier-badge mult-1-5x">1.5x</span><span class="text-slate-400">&gt; 25% time left</span></div>
+                            <div class="flex justify-between"><span class="multiplier-badge mult-1x">1x</span><span class="text-slate-400">On time</span></div>
+                            <div class="flex justify-between"><span class="multiplier-badge mult-late">0.5x</span><span class="text-slate-400">Overdue</span></div>
                         </div>
                     </div>
-
-                    <!-- Action Buttons -->
                     <div class="space-y-2">
-                        <button onclick="openAddTaskModal()" class="btn-cyber w-full py-2.5 px-4 rounded-xl font-bold text-slate-900 flex items-center justify-center gap-2 text-sm">
-                            <i data-lucide="plus" class="w-4 h-4"></i>
-                            <span>Add Quest</span>
-                        </button>
-                        <button onclick="resetTasks()" class="w-full py-2.5 px-4 rounded-xl font-bold bg-slate-800 border border-slate-600 text-slate-300 hover:border-emerald-500 hover:text-emerald-400 transition-all flex items-center justify-center gap-2 text-sm">
-                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-                            <span>Reset Tasks</span>
-                        </button>
+                        <button onclick="openAddTaskModal()" class="btn-cyber w-full py-2.5 px-4 rounded-xl font-bold text-slate-900 flex items-center justify-center gap-2 text-sm"><i data-lucide="plus" class="w-4 h-4"></i><span>Add Quest</span></button>
+                        <button onclick="resetTasks()" class="w-full py-2.5 px-4 rounded-xl font-bold bg-slate-800 border border-slate-600 text-slate-300 hover:border-emerald-500 hover:text-emerald-400 transition-all flex items-center justify-center gap-2 text-sm"><i data-lucide="refresh-cw" class="w-4 h-4"></i><span>Reset Tasks</span></button>
                     </div>
                 </div>
             </aside>
 
-            <!-- Right Section: Tasks -->
+            <!-- Tasks -->
             <main class="tasks-main">
-                <!-- Tabs -->
                 <div class="tabs-container">
-                    <button class="tab-btn active" onclick="switchTab('daily')">
-                        <i data-lucide="sun" class="w-4 h-4 inline mr-1"></i>
-                        Daily <span id="daily-count" class="ml-1 text-xs opacity-70">(0)</span>
-                    </button>
-                    <button class="tab-btn" onclick="switchTab('weekly')">
-                        <i data-lucide="calendar-days" class="w-4 h-4 inline mr-1"></i>
-                        Weekly <span id="weekly-count" class="ml-1 text-xs opacity-70">(0)</span>
-                    </button>
-                    <button class="tab-btn" onclick="switchTab('monthly')">
-                        <i data-lucide="calendar" class="w-4 h-4 inline mr-1"></i>
-                        Monthly <span id="monthly-count" class="ml-1 text-xs opacity-70">(0)</span>
-                    </button>
-                    <button class="tab-btn" onclick="switchTab('completed')">
-                        <i data-lucide="trophy" class="w-4 h-4 inline mr-1"></i>
-                        Completed <span id="completed-count" class="ml-1 text-xs opacity-70">(0)</span>
-                    </button>
+                    <button class="tab-btn active" onclick="switchTab('daily')"><i data-lucide="sun" class="w-4 h-4 inline mr-1"></i>Daily <span id="daily-count" class="ml-1 text-xs opacity-70">(0)</span></button>
+                    <button class="tab-btn" onclick="switchTab('weekly')"><i data-lucide="calendar-days" class="w-4 h-4 inline mr-1"></i>Weekly <span id="weekly-count" class="ml-1 text-xs opacity-70">(0)</span></button>
+                    <button class="tab-btn" onclick="switchTab('monthly')"><i data-lucide="calendar" class="w-4 h-4 inline mr-1"></i>Monthly <span id="monthly-count" class="ml-1 text-xs opacity-70">(0)</span></button>
+                    <button class="tab-btn" onclick="switchTab('completed')"><i data-lucide="trophy" class="w-4 h-4 inline mr-1"></i>Done <span id="completed-count" class="ml-1 text-xs opacity-70">(0)</span></button>
                 </div>
 
-                <!-- Daily Tasks -->
+                <!-- Daily -->
                 <div id="tab-daily" class="tab-content active">
-                    <div class="section-header">
-                        <i data-lucide="sun" class="w-5 h-5 text-orange-400"></i>
-                        <h2 class="cyber-title text-base font-bold text-orange-400 tracking-wider">DAILY QUESTS</h2>
-                    </div>
-                    <div id="daily-tasks" class="space-y-2">
-                        <!-- Daily tasks rendered here -->
-                    </div>
-                    <div id="no-daily-tasks" class="cyber-card rounded-xl p-6 text-center hidden">
-                        <i data-lucide="sunrise" class="w-10 h-10 mx-auto mb-2 text-slate-600"></i>
-                        <p class="text-slate-500 text-sm">No daily quests. Add one to start your day!</p>
-                    </div>
+                    <div class="section-header"><i data-lucide="sun" class="w-5 h-5 text-orange-400"></i><h2 class="cyber-title text-base font-bold text-orange-400 tracking-wider">DAILY QUESTS</h2></div>
+                    <div id="daily-tasks" class="space-y-2"></div>
+                    <div id="no-daily-tasks" class="cyber-card rounded-xl p-6 text-center hidden"><i data-lucide="sunrise" class="w-10 h-10 mx-auto mb-2 text-slate-600"></i><p class="text-slate-500 text-sm">No daily quests.</p></div>
                 </div>
-
-                <!-- Weekly Tasks -->
+                <!-- Weekly -->
                 <div id="tab-weekly" class="tab-content">
-                    <div class="section-header">
-                        <i data-lucide="calendar-days" class="w-5 h-5 text-sky-400"></i>
-                        <h2 class="cyber-title text-base font-bold text-sky-400 tracking-wider">WEEKLY QUESTS</h2>
-                    </div>
-                    <!-- Mini Calendar -->
+                    <div class="section-header"><i data-lucide="calendar-days" class="w-5 h-5 text-sky-400"></i><h2 class="cyber-title text-base font-bold text-sky-400 tracking-wider">WEEKLY QUESTS</h2></div>
                     <div class="cyber-card rounded-xl p-3 mb-4">
                         <p class="text-xs text-slate-400 mb-2">Today: <span id="current-day" class="text-emerald-400 font-semibold"></span></p>
-                        <div class="day-selector" id="week-calendar">
-                            <!-- Days rendered by JS -->
-                        </div>
+                        <div class="day-selector" id="week-calendar"></div>
                     </div>
-                    <div id="weekly-tasks" class="space-y-2">
-                        <!-- Weekly tasks rendered here -->
-                    </div>
-                    <div id="no-weekly-tasks" class="cyber-card rounded-xl p-6 text-center hidden">
-                        <i data-lucide="calendar-x" class="w-10 h-10 mx-auto mb-2 text-slate-600"></i>
-                        <p class="text-slate-500 text-sm">No weekly quests scheduled.</p>
-                    </div>
+                    <div id="weekly-tasks" class="space-y-2"></div>
+                    <div id="no-weekly-tasks" class="cyber-card rounded-xl p-6 text-center hidden"><i data-lucide="calendar-x" class="w-10 h-10 mx-auto mb-2 text-slate-600"></i><p class="text-slate-500 text-sm">No weekly quests for today.</p></div>
                 </div>
-
-                <!-- Monthly Tasks -->
+                <!-- Monthly -->
                 <div id="tab-monthly" class="tab-content">
-                    <div class="section-header">
-                        <i data-lucide="calendar" class="w-5 h-5 text-violet-400"></i>
-                        <h2 class="cyber-title text-base font-bold text-violet-400 tracking-wider">MONTHLY QUESTS</h2>
-                    </div>
-                    <div id="monthly-tasks" class="space-y-2">
-                        <!-- Monthly tasks rendered here -->
-                    </div>
-                    <div id="no-monthly-tasks" class="cyber-card rounded-xl p-6 text-center hidden">
-                        <i data-lucide="calendar-x" class="w-10 h-10 mx-auto mb-2 text-slate-600"></i>
-                        <p class="text-slate-500 text-sm">No monthly quests. Plan your big goals!</p>
-                    </div>
+                    <div class="section-header"><i data-lucide="calendar" class="w-5 h-5 text-violet-400"></i><h2 class="cyber-title text-base font-bold text-violet-400 tracking-wider">MONTHLY QUESTS</h2></div>
+                    <div id="monthly-tasks" class="space-y-2"></div>
+                    <div id="no-monthly-tasks" class="cyber-card rounded-xl p-6 text-center hidden"><i data-lucide="calendar-x" class="w-10 h-10 mx-auto mb-2 text-slate-600"></i><p class="text-slate-500 text-sm">No monthly quests.</p></div>
                 </div>
-
-                <!-- Completed Tasks (Last 30) -->
+                <!-- Completed -->
                 <div id="tab-completed" class="tab-content">
-                    <div class="section-header">
-                        <i data-lucide="trophy" class="w-5 h-5 text-emerald-400"></i>
-                        <h2 class="cyber-title text-base font-bold text-emerald-400 tracking-wider">COMPLETED</h2>
-                        <span class="text-xs text-slate-500">(Last 30)</span>
-                    </div>
-                    <div id="completed-tasks" class="space-y-2">
-                        <!-- Completed tasks rendered here -->
-                    </div>
-                    <div id="no-completed-tasks" class="cyber-card rounded-xl p-6 text-center opacity-50">
-                        <i data-lucide="circle-check" class="w-10 h-10 mx-auto mb-2 text-slate-700"></i>
-                        <p class="text-slate-600 text-sm">Complete quests to see them here</p>
-                    </div>
+                    <div class="section-header"><i data-lucide="trophy" class="w-5 h-5 text-emerald-400"></i><h2 class="cyber-title text-base font-bold text-emerald-400 tracking-wider">COMPLETED</h2><span class="text-xs text-slate-500">(Last 30)</span></div>
+                    <div id="completed-tasks" class="space-y-2"></div>
+                    <div id="no-completed-tasks" class="cyber-card rounded-xl p-6 text-center opacity-50"><i data-lucide="circle-check" class="w-10 h-10 mx-auto mb-2 text-slate-700"></i><p class="text-slate-600 text-sm">Complete quests to see them here</p></div>
                 </div>
-
-                <!-- Footer -->
-                <footer class="mt-6 text-center text-slate-600 text-xs">
-                    <p>Keep grinding. Level up. Become legendary.</p>
-                </footer>
+                <footer class="mt-6 text-center text-slate-600 text-xs"><p>Keep grinding. Level up. Become legendary.</p></footer>
             </main>
         </div>
     </div>
@@ -556,105 +220,65 @@
         <div class="cyber-card rounded-2xl p-5 w-full max-w-md border border-emerald-500/30 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between mb-5">
                 <h3 class="cyber-title text-lg font-bold text-emerald-400">New Quest</h3>
-                <button onclick="closeAddTaskModal()" class="text-slate-400 hover:text-emerald-400 transition-colors">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
+                <button onclick="closeAddTaskModal()" class="text-slate-400 hover:text-emerald-400 transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-
             <form onsubmit="addCustomTask(event)">
                 <div class="mb-4">
                     <label class="block text-sm text-slate-400 mb-2">Quest Title</label>
-                    <input type="text" id="task-title" required
-                        class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none transition-colors"
-                        placeholder="Enter quest name...">
+                    <input type="text" id="task-title" required class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none transition-colors" placeholder="Enter quest name...">
                 </div>
-
                 <div class="grid grid-cols-2 gap-3 mb-4">
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-2">Category</label>
-                        <select id="task-category" required
-                            class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none transition-colors text-sm">
-                            <option value="Intelligence">Intelligence</option>
-                            <option value="Strength">Strength</option>
-                            <option value="Discipline">Discipline</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-2">Frequency</label>
-                        <select id="task-frequency" required onchange="toggleWeeklyDays()"
-                            class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none transition-colors text-sm">
-                            <option value="daily">Daily</option>
-                            <option value="weekly">Weekly</option>
-                            <option value="monthly">Monthly</option>
-                        </select>
-                    </div>
+                    <div><label class="block text-sm text-slate-400 mb-2">Category</label><select id="task-category" required class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none text-sm"><option value="Intelligence">Intelligence</option><option value="Strength">Strength</option><option value="Discipline">Discipline</option></select></div>
+                    <div><label class="block text-sm text-slate-400 mb-2">Frequency</label><select id="task-frequency" required onchange="onFrequencyChange()" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none text-sm"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></div>
                 </div>
 
                 <!-- Weekly Days Selector -->
                 <div id="weekly-days-selector" class="mb-4 hidden">
                     <label class="block text-sm text-slate-400 mb-2">Select Days</label>
-                    <div class="day-selector">
-                        <label class="day-btn" data-day="0">
-                            <input type="checkbox" name="weekday" value="0" class="hidden">
-                            Sun
-                        </label>
-                        <label class="day-btn" data-day="1">
-                            <input type="checkbox" name="weekday" value="1" class="hidden">
-                            Mon
-                        </label>
-                        <label class="day-btn" data-day="2">
-                            <input type="checkbox" name="weekday" value="2" class="hidden">
-                            Tue
-                        </label>
-                        <label class="day-btn" data-day="3">
-                            <input type="checkbox" name="weekday" value="3" class="hidden">
-                            Wed
-                        </label>
-                        <label class="day-btn" data-day="4">
-                            <input type="checkbox" name="weekday" value="4" class="hidden">
-                            Thu
-                        </label>
-                        <label class="day-btn" data-day="5">
-                            <input type="checkbox" name="weekday" value="5" class="hidden">
-                            Fri
-                        </label>
-                        <label class="day-btn" data-day="6">
-                            <input type="checkbox" name="weekday" value="6" class="hidden">
-                            Sat
-                        </label>
+                    <div class="day-selector" id="modal-day-selector">
+                        <label class="day-btn" data-day="0"><input type="checkbox" name="weekday" value="0" class="hidden">Sun</label>
+                        <label class="day-btn" data-day="1"><input type="checkbox" name="weekday" value="1" class="hidden">Mon</label>
+                        <label class="day-btn" data-day="2"><input type="checkbox" name="weekday" value="2" class="hidden">Tue</label>
+                        <label class="day-btn" data-day="3"><input type="checkbox" name="weekday" value="3" class="hidden">Wed</label>
+                        <label class="day-btn" data-day="4"><input type="checkbox" name="weekday" value="4" class="hidden">Thu</label>
+                        <label class="day-btn" data-day="5"><input type="checkbox" name="weekday" value="5" class="hidden">Fri</label>
+                        <label class="day-btn" data-day="6"><input type="checkbox" name="weekday" value="6" class="hidden">Sat</label>
                     </div>
                 </div>
 
+                <!-- Monthly Calendar Picker -->
+                <div id="monthly-date-selector" class="mb-4 hidden">
+                    <label class="block text-sm text-slate-400 mb-2">Select Due Date</label>
+                    <div class="cyber-card rounded-lg p-3">
+                        <div class="cal-nav">
+                            <button type="button" onclick="calNavMonth(-1)"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                            <span id="cal-month-label" class="text-sm font-semibold text-emerald-400"></span>
+                            <button type="button" onclick="calNavMonth(1)"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                        </div>
+                        <div class="calendar-grid" id="modal-calendar"></div>
+                    </div>
+                    <input type="hidden" id="task-due-date">
+                </div>
+
+                <!-- Deadline Time -->
+                <div class="mb-4">
+                    <label class="block text-sm text-slate-400 mb-2">Deadline Time</label>
+                    <div class="flex gap-3 items-center">
+                        <input type="time" id="task-deadline" class="flex-1 bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none text-sm" value="23:59">
+                        <div class="text-xs text-slate-500 flex-shrink-0">Complete early<br>for bonus XP!</div>
+                    </div>
+                </div>
+
+                <!-- Difficulty -->
                 <div class="mb-5">
                     <label class="block text-sm text-slate-400 mb-2">Difficulty</label>
                     <div class="grid grid-cols-3 gap-2">
-                        <label class="cursor-pointer">
-                            <input type="radio" name="difficulty" value="Easy" class="hidden peer" checked>
-                            <div class="border-2 border-slate-600 rounded-lg p-2 text-center peer-checked:border-green-500 peer-checked:bg-green-500/10 transition-all">
-                                <span class="text-green-400 font-bold text-sm">Easy</span>
-                                <p class="text-xs text-slate-500">+25 XP</p>
-                            </div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="difficulty" value="Medium" class="hidden peer">
-                            <div class="border-2 border-slate-600 rounded-lg p-2 text-center peer-checked:border-yellow-500 peer-checked:bg-yellow-500/10 transition-all">
-                                <span class="text-yellow-400 font-bold text-sm">Medium</span>
-                                <p class="text-xs text-slate-500">+50 XP</p>
-                            </div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="difficulty" value="Hard" class="hidden peer">
-                            <div class="border-2 border-slate-600 rounded-lg p-2 text-center peer-checked:border-red-500 peer-checked:bg-red-500/10 transition-all">
-                                <span class="text-red-400 font-bold text-sm">Hard</span>
-                                <p class="text-xs text-slate-500">+100 XP</p>
-                            </div>
-                        </label>
+                        <label class="cursor-pointer"><input type="radio" name="difficulty" value="Easy" class="hidden peer" checked><div class="border-2 border-slate-600 rounded-lg p-2 text-center peer-checked:border-green-500 peer-checked:bg-green-500/10 transition-all"><span class="text-green-400 font-bold text-sm">Easy</span><p class="text-xs text-slate-500">25 XP</p></div></label>
+                        <label class="cursor-pointer"><input type="radio" name="difficulty" value="Medium" class="hidden peer"><div class="border-2 border-slate-600 rounded-lg p-2 text-center peer-checked:border-yellow-500 peer-checked:bg-yellow-500/10 transition-all"><span class="text-yellow-400 font-bold text-sm">Medium</span><p class="text-xs text-slate-500">50 XP</p></div></label>
+                        <label class="cursor-pointer"><input type="radio" name="difficulty" value="Hard" class="hidden peer"><div class="border-2 border-slate-600 rounded-lg p-2 text-center peer-checked:border-red-500 peer-checked:bg-red-500/10 transition-all"><span class="text-red-400 font-bold text-sm">Hard</span><p class="text-xs text-slate-500">100 XP</p></div></label>
                     </div>
                 </div>
-
-                <button type="submit" class="btn-cyber w-full py-2.5 rounded-xl font-bold text-slate-900 text-sm">
-                    Create Quest
-                </button>
+                <button type="submit" class="btn-cyber w-full py-2.5 rounded-xl font-bold text-slate-900 text-sm">Create Quest</button>
             </form>
         </div>
     </div>
@@ -663,590 +287,515 @@
     <div id="reset-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div class="cyber-card rounded-2xl p-5 w-full max-w-sm border border-emerald-500/30">
             <h3 class="cyber-title text-lg font-bold text-emerald-400 mb-4">Reset Tasks</h3>
-            <p class="text-slate-400 text-sm mb-4">Choose what to reset. Your XP and level will be preserved.</p>
+            <p class="text-slate-400 text-sm mb-4">Choose what to reset. XP is preserved.</p>
             <div class="space-y-2 mb-5">
-                <button onclick="resetByFrequency('daily')" class="w-full py-2.5 px-4 rounded-lg bg-orange-500/20 border border-orange-500/30 text-orange-400 hover:bg-orange-500/30 transition-all text-sm font-semibold">
-                    Reset Daily Tasks
-                </button>
-                <button onclick="resetByFrequency('weekly')" class="w-full py-2.5 px-4 rounded-lg bg-sky-500/20 border border-sky-500/30 text-sky-400 hover:bg-sky-500/30 transition-all text-sm font-semibold">
-                    Reset Weekly Tasks
-                </button>
-                <button onclick="resetByFrequency('monthly')" class="w-full py-2.5 px-4 rounded-lg bg-violet-500/20 border border-violet-500/30 text-violet-400 hover:bg-violet-500/30 transition-all text-sm font-semibold">
-                    Reset Monthly Tasks
-                </button>
-                <button onclick="resetByFrequency('all')" class="w-full py-2.5 px-4 rounded-lg bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500/30 transition-all text-sm font-semibold">
-                    Reset All Tasks
-                </button>
+                <button onclick="resetByFrequency('daily')" class="w-full py-2.5 px-4 rounded-lg bg-orange-500/20 border border-orange-500/30 text-orange-400 hover:bg-orange-500/30 transition-all text-sm font-semibold">Reset Daily</button>
+                <button onclick="resetByFrequency('weekly')" class="w-full py-2.5 px-4 rounded-lg bg-sky-500/20 border border-sky-500/30 text-sky-400 hover:bg-sky-500/30 transition-all text-sm font-semibold">Reset Weekly</button>
+                <button onclick="resetByFrequency('monthly')" class="w-full py-2.5 px-4 rounded-lg bg-violet-500/20 border border-violet-500/30 text-violet-400 hover:bg-violet-500/30 transition-all text-sm font-semibold">Reset Monthly</button>
+                <button onclick="resetByFrequency('all')" class="w-full py-2.5 px-4 rounded-lg bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500/30 transition-all text-sm font-semibold">Reset All</button>
             </div>
-            <button onclick="closeResetModal()" class="w-full py-2 text-slate-400 hover:text-slate-200 text-sm">
-                Cancel
-            </button>
+            <button onclick="closeResetModal()" class="w-full py-2 text-slate-400 hover:text-slate-200 text-sm">Cancel</button>
         </div>
     </div>
 
     <script>
-        // ============================================
-        // DATA MODEL & STATE
-        // ============================================
+    // ============================================
+    // CONSTANTS
+    // ============================================
+    const XP_VALUES = { Easy:25, Medium:50, Hard:100 };
+    const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const DAY_NAMES_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const LEVEL_TITLES = ['INITIATE','ROOKIE','APPRENTICE','ADEPT','VETERAN','ELITE','MASTER','GRANDMASTER','LEGEND','MYTHIC','TRANSCENDENT','IMMORTAL','DIVINE','COSMIC','ETERNAL'];
 
-        const XP_VALUES = { Easy: 25, Medium: 50, Hard: 100 };
-        const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        const DAY_NAMES_FULL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const DEFAULT_TASKS = [
+        { id:1, title:'Push code to GitHub', category:'Intelligence', difficulty:'Hard', frequency:'daily', deadline:'18:00' },
+        { id:2, title:'Read 20 pages', category:'Intelligence', difficulty:'Medium', frequency:'daily', deadline:'21:00' },
+        { id:3, title:'Learn a new concept', category:'Intelligence', difficulty:'Medium', frequency:'weekly', weekdays:[1,3,5], deadline:'20:00' },
+        { id:4, title:'Complete workout', category:'Strength', difficulty:'Hard', frequency:'weekly', weekdays:[1,2,4,5], deadline:'19:00' },
+        { id:5, title:'Take a 30-min walk', category:'Strength', difficulty:'Easy', frequency:'daily', deadline:'12:00' },
+        { id:6, title:'Stretch for 10 minutes', category:'Strength', difficulty:'Easy', frequency:'daily', deadline:'08:00' },
+        { id:7, title:'Drink 2L water', category:'Discipline', difficulty:'Easy', frequency:'daily', deadline:'20:00' },
+        { id:8, title:'No social media 2hrs', category:'Discipline', difficulty:'Medium', frequency:'daily', deadline:'17:00' },
+        { id:9, title:'Review monthly goals', category:'Discipline', difficulty:'Hard', frequency:'monthly', deadline:'18:00', dueDate:null },
+        { id:10, title:'Deep clean workspace', category:'Discipline', difficulty:'Medium', frequency:'monthly', deadline:'15:00', dueDate:null },
+    ];
 
-        const LEVEL_TITLES = [
-            'INITIATE', 'ROOKIE', 'APPRENTICE', 'ADEPT', 'VETERAN',
-            'ELITE', 'MASTER', 'GRANDMASTER', 'LEGEND', 'MYTHIC',
-            'TRANSCENDENT', 'IMMORTAL', 'DIVINE', 'COSMIC', 'ETERNAL'
-        ];
+    let state = { tasks:[], completedTasks:[], totalXP:0, categoryXP:{Intelligence:0,Strength:0,Discipline:0}, nextTaskId:100, profileImage:null, currentTab:'daily' };
+    let calViewDate = new Date();
+    let selectedCalDate = null;
 
-        // Default tasks with frequency
-        const DEFAULT_TASKS = [
-            { id: 1, title: 'Push code to GitHub', category: 'Intelligence', difficulty: 'Hard', frequency: 'daily' },
-            { id: 2, title: 'Read 20 pages', category: 'Intelligence', difficulty: 'Medium', frequency: 'daily' },
-            { id: 3, title: 'Learn a new concept', category: 'Intelligence', difficulty: 'Medium', frequency: 'weekly', weekdays: [1, 3, 5] },
-            { id: 4, title: 'Complete workout', category: 'Strength', difficulty: 'Hard', frequency: 'weekly', weekdays: [1, 2, 4, 5] },
-            { id: 5, title: 'Take a 30-min walk', category: 'Strength', difficulty: 'Easy', frequency: 'daily' },
-            { id: 6, title: 'Stretch for 10 minutes', category: 'Strength', difficulty: 'Easy', frequency: 'daily' },
-            { id: 7, title: 'Drink 2L water', category: 'Discipline', difficulty: 'Easy', frequency: 'daily' },
-            { id: 8, title: 'No social media for 2 hours', category: 'Discipline', difficulty: 'Medium', frequency: 'daily' },
-            { id: 9, title: 'Review monthly goals', category: 'Discipline', difficulty: 'Hard', frequency: 'monthly' },
-            { id: 10, title: 'Deep clean workspace', category: 'Discipline', difficulty: 'Medium', frequency: 'monthly' },
-        ];
+    // ============================================
+    // PERSISTENCE
+    // ============================================
+    function saveState() {
+        localStorage.setItem('gamifiedTaskManager', JSON.stringify({
+            completedTasks: state.completedTasks.slice(-30),
+            totalXP: state.totalXP, categoryXP: state.categoryXP,
+            customTasks: state.tasks.filter(t => t.id >= 100),
+            nextTaskId: state.nextTaskId, profileImage: state.profileImage
+        }));
+    }
+    function loadState() {
+        const saved = localStorage.getItem('gamifiedTaskManager');
+        if (saved) {
+            const d = JSON.parse(saved);
+            state.completedTasks = (d.completedTasks||[]).slice(-30);
+            state.totalXP = d.totalXP||0;
+            state.categoryXP = d.categoryXP||{Intelligence:0,Strength:0,Discipline:0};
+            state.nextTaskId = d.nextTaskId||100;
+            state.profileImage = d.profileImage||null;
+            state.tasks = [...DEFAULT_TASKS, ...(d.customTasks||[])];
+            if (state.profileImage) document.getElementById('profile-avatar').src = state.profileImage;
+        } else { state.tasks = [...DEFAULT_TASKS]; }
+    }
 
-        let state = {
-            tasks: [],
-            completedTasks: [], // Array of {taskId, title, category, difficulty, frequency, xp, completedAt}
-            totalXP: 0,
-            categoryXP: { Intelligence: 0, Strength: 0, Discipline: 0 },
-            nextTaskId: 100,
-            profileImage: null,
-            currentTab: 'daily'
+    // ============================================
+    // AVATAR UPLOAD
+    // ============================================
+    function handleAvatarUpload(event) {
+        const file = event.target.files[0];
+        if (!file||!file.type.startsWith('image/')) return;
+        if (file.size > 2*1024*1024) { alert('Max 2MB.'); return; }
+        const reader = new FileReader();
+        reader.onload = e => {
+            const img = new Image();
+            img.onload = () => {
+                const c = document.createElement('canvas'); const M=200;
+                let w=img.width,h=img.height;
+                if(w>h){if(w>M){h*=M/w;w=M}}else{if(h>M){w*=M/h;h=M}}
+                c.width=w;c.height=h; c.getContext('2d').drawImage(img,0,0,w,h);
+                const url=c.toDataURL('image/jpeg',.8);
+                state.profileImage=url; document.getElementById('profile-avatar').src=url; saveState();
+                confetti({particleCount:50,spread:60,origin:{x:.5,y:.3},colors:['#10b981','#34d399','#6ee7b7']});
+            };
+            img.src = e.target.result;
         };
+        reader.readAsDataURL(file);
+    }
 
-        // ============================================
-        // PERSISTENCE (localStorage)
-        // ============================================
+    // ============================================
+    // XP / LEVEL
+    // ============================================
+    function calculateLevel(xp) { return Math.floor(0.1*Math.sqrt(xp)); }
+    function getXPForLevel(l) { return Math.pow(l/0.1,2); }
+    function getLevelTitle(l) { return LEVEL_TITLES[Math.min(l,LEVEL_TITLES.length-1)]; }
 
-        function saveState() {
-            // Keep only last 30 completed tasks
-            const last30Completed = state.completedTasks.slice(-30);
+    function updateLevelDisplay() {
+        const l=calculateLevel(state.totalXP), cur=getXPForLevel(l), nxt=getXPForLevel(l+1);
+        const prog=state.totalXP-cur, need=nxt-cur, pct=need>0?(prog/need)*100:0;
+        document.getElementById('level-number').textContent=l;
+        document.getElementById('level-title').textContent=getLevelTitle(l);
+        document.getElementById('total-xp').textContent=state.totalXP.toLocaleString();
+        document.getElementById('current-level-xp').textContent=`${Math.floor(cur)} XP`;
+        document.getElementById('next-level-xp').textContent=`${Math.floor(nxt)} XP`;
+        document.getElementById('xp-to-next').textContent=Math.ceil(nxt-state.totalXP);
+        document.getElementById('xp-progress').style.width=`${Math.min(pct,100)}%`;
+        const ring=document.getElementById('level-ring-progress');
+        ring.style.strokeDashoffset=2*Math.PI*57-(pct/100)*2*Math.PI*57;
+        document.getElementById('stat-intelligence').textContent=state.categoryXP.Intelligence;
+        document.getElementById('stat-strength').textContent=state.categoryXP.Strength;
+        document.getElementById('stat-discipline').textContent=state.categoryXP.Discipline;
+    }
 
-            localStorage.setItem('gamifiedTaskManager', JSON.stringify({
-                completedTasks: last30Completed,
-                totalXP: state.totalXP,
-                categoryXP: state.categoryXP,
-                customTasks: state.tasks.filter(t => t.id >= 100),
-                nextTaskId: state.nextTaskId,
-                profileImage: state.profileImage
-            }));
+    // ============================================
+    // DEADLINE & BONUS XP
+    // ============================================
+    function getTaskDeadlineToday(task) {
+        if (!task.deadline) return null;
+        const now = new Date();
+        const [h,m] = task.deadline.split(':').map(Number);
+        const dl = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
+        return dl;
+    }
+
+    function getDayStartTime() {
+        const now = new Date();
+        return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+    }
+
+    function getTimeMultiplier(task) {
+        const dl = getTaskDeadlineToday(task);
+        if (!dl) return { mult: 1, label: '1x', cls: 'mult-1x' };
+        const now = new Date();
+        const start = getDayStartTime();
+        const totalWindow = dl.getTime() - start.getTime();
+        if (totalWindow <= 0) return { mult: 1, label: '1x', cls: 'mult-1x' };
+
+        const timeLeft = dl.getTime() - now.getTime();
+        const pctLeft = timeLeft / totalWindow;
+
+        if (pctLeft <= 0) return { mult: 0.5, label: '0.5x', cls: 'mult-late' };
+        if (pctLeft > 0.75) return { mult: 3, label: '3x', cls: 'mult-3x' };
+        if (pctLeft > 0.50) return { mult: 2, label: '2x', cls: 'mult-2x' };
+        if (pctLeft > 0.25) return { mult: 1.5, label: '1.5x', cls: 'mult-1-5x' };
+        return { mult: 1, label: '1x', cls: 'mult-1x' };
+    }
+
+    function getDeadlineProgress(task) {
+        const dl = getTaskDeadlineToday(task);
+        if (!dl) return null;
+        const now = new Date();
+        const start = getDayStartTime();
+        const total = dl.getTime() - start.getTime();
+        if (total <= 0) return { pct: 100, cls: 'urgent' };
+        const elapsed = now.getTime() - start.getTime();
+        const pct = Math.min((elapsed / total) * 100, 100);
+        if (pct >= 85) return { pct, cls: 'urgent' };
+        if (pct >= 60) return { pct, cls: 'warning' };
+        return { pct, cls: 'good' };
+    }
+
+    function formatTime(timeStr) {
+        if (!timeStr) return '';
+        const [h,m] = timeStr.split(':').map(Number);
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const h12 = h % 12 || 12;
+        return `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
+    }
+
+    function getTimeLeftStr(task) {
+        const dl = getTaskDeadlineToday(task);
+        if (!dl) return '';
+        const diff = dl.getTime() - Date.now();
+        if (diff <= 0) return 'OVERDUE';
+        const hrs = Math.floor(diff / 3600000);
+        const mins = Math.floor((diff % 3600000) / 60000);
+        if (hrs > 0) return `${hrs}h ${mins}m left`;
+        return `${mins}m left`;
+    }
+
+    // ============================================
+    // TABS
+    // ============================================
+    function switchTab(tab) {
+        state.currentTab = tab;
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+        document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
+        document.getElementById(`tab-${tab}`).classList.add('active');
+    }
+
+    // ============================================
+    // WEEK CALENDAR
+    // ============================================
+    function renderWeekCalendar() {
+        const today = new Date().getDay();
+        document.getElementById('current-day').textContent = DAY_NAMES_FULL[today];
+        document.getElementById('week-calendar').innerHTML = DAY_NAMES.map((d,i)=>
+            `<div class="day-btn ${i===today?'selected':''}">${d}</div>`
+        ).join('');
+    }
+
+    // ============================================
+    // MODAL CALENDAR (Month Picker)
+    // ============================================
+    function renderModalCalendar() {
+        const year = calViewDate.getFullYear(), month = calViewDate.getMonth();
+        document.getElementById('cal-month-label').textContent = `${MONTH_NAMES[month]} ${year}`;
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month+1, 0).getDate();
+        const prevDays = new Date(year, month, 0).getDate();
+        const today = new Date();
+
+        let html = DAY_NAMES.map(d=>`<div class="cal-header">${d}</div>`).join('');
+        // Previous month padding
+        for (let i = firstDay-1; i >= 0; i--) {
+            html += `<div class="cal-day other-month">${prevDays - i}</div>`;
         }
-
-        function loadState() {
-            const saved = localStorage.getItem('gamifiedTaskManager');
-            if (saved) {
-                const data = JSON.parse(saved);
-                state.completedTasks = (data.completedTasks || []).slice(-30);
-                state.totalXP = data.totalXP || 0;
-                state.categoryXP = data.categoryXP || { Intelligence: 0, Strength: 0, Discipline: 0 };
-                state.nextTaskId = data.nextTaskId || 100;
-                state.profileImage = data.profileImage || null;
-
-                const customTasks = data.customTasks || [];
-                state.tasks = [...DEFAULT_TASKS, ...customTasks];
-
-                if (state.profileImage) {
-                    document.getElementById('profile-avatar').src = state.profileImage;
-                }
-            } else {
-                state.tasks = [...DEFAULT_TASKS];
-            }
+        // Current month
+        for (let d = 1; d <= daysInMonth; d++) {
+            const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            const isToday = d===today.getDate() && month===today.getMonth() && year===today.getFullYear();
+            const isSel = selectedCalDate === dateStr;
+            const isPast = new Date(year, month, d) < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            html += `<div class="cal-day ${isToday?'today':''} ${isSel?'selected-day':''} ${isPast?'other-month':''}" onclick="selectCalDate('${dateStr}')">${d}</div>`;
         }
-
-        // ============================================
-        // PROFILE PICTURE UPLOAD
-        // ============================================
-
-        function handleAvatarUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            if (!file.type.startsWith('image/')) {
-                alert('Please select an image file.');
-                return;
-            }
-
-            if (file.size > 2 * 1024 * 1024) {
-                alert('Image size should be less than 2MB.');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const MAX_SIZE = 200;
-                    let width = img.width;
-                    let height = img.height;
-
-                    if (width > height) {
-                        if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
-                    } else {
-                        if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-                    state.profileImage = dataUrl;
-                    document.getElementById('profile-avatar').src = dataUrl;
-                    saveState();
-
-                    confetti({
-                        particleCount: 50,
-                        spread: 60,
-                        origin: { x: 0.5, y: 0.3 },
-                        colors: ['#10b981', '#34d399', '#6ee7b7']
-                    });
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
+        // Next month padding
+        const totalCells = firstDay + daysInMonth;
+        const remaining = (7 - (totalCells % 7)) % 7;
+        for (let i = 1; i <= remaining; i++) {
+            html += `<div class="cal-day other-month">${i}</div>`;
         }
+        document.getElementById('modal-calendar').innerHTML = html;
+    }
 
-        // ============================================
-        // EXPERIENCE SYSTEM
-        // ============================================
+    function calNavMonth(dir) {
+        calViewDate.setMonth(calViewDate.getMonth() + dir);
+        renderModalCalendar();
+        lucide.createIcons();
+    }
 
-        function calculateLevel(xp) {
-            return Math.floor(0.1 * Math.sqrt(xp));
-        }
+    function selectCalDate(dateStr) {
+        selectedCalDate = dateStr;
+        document.getElementById('task-due-date').value = dateStr;
+        renderModalCalendar();
+    }
 
-        function getXPForLevel(level) {
-            return Math.pow(level / 0.1, 2);
-        }
+    // ============================================
+    // TASK HELPERS
+    // ============================================
+    function getTaskXP(task) { return XP_VALUES[task.difficulty]||25; }
 
-        function getLevelTitle(level) {
-            return LEVEL_TITLES[Math.min(level, LEVEL_TITLES.length - 1)];
-        }
+    function isTaskCompletedToday(taskId) {
+        const today = new Date().toDateString();
+        return state.completedTasks.some(ct => ct.taskId===taskId && new Date(ct.completedAt).toDateString()===today);
+    }
 
-        function updateLevelDisplay() {
-            const level = calculateLevel(state.totalXP);
-            const currentLevelXP = getXPForLevel(level);
-            const nextLevelXP = getXPForLevel(level + 1);
-            const progressXP = state.totalXP - currentLevelXP;
-            const neededXP = nextLevelXP - currentLevelXP;
-            const progressPercent = neededXP > 0 ? (progressXP / neededXP) * 100 : 0;
+    function isWeeklyTaskForToday(task) {
+        if (task.frequency!=='weekly') return true;
+        return task.weekdays && task.weekdays.includes(new Date().getDay());
+    }
 
-            document.getElementById('level-number').textContent = level;
-            document.getElementById('level-title').textContent = getLevelTitle(level);
-            document.getElementById('total-xp').textContent = state.totalXP.toLocaleString();
-            document.getElementById('current-level-xp').textContent = `${Math.floor(currentLevelXP)} XP`;
-            document.getElementById('next-level-xp').textContent = `${Math.floor(nextLevelXP)} XP`;
-            document.getElementById('xp-to-next').textContent = Math.ceil(nextLevelXP - state.totalXP);
-            document.getElementById('xp-progress').style.width = `${Math.min(progressPercent, 100)}%`;
+    // ============================================
+    // RENDER TASKS
+    // ============================================
+    function renderTask(task) {
+        const xp = getTaskXP(task);
+        const catCls = `category-${task.category.toLowerCase()}`;
+        const tagCls = `tag-${task.category.toLowerCase()}`;
+        const diffCls = `difficulty-${task.difficulty.toLowerCase()}`;
+        const freqCls = `freq-${task.frequency}`;
+        const done = isTaskCompletedToday(task.id);
+        const mult = getTimeMultiplier(task);
+        const dlProg = getDeadlineProgress(task);
+        const bonusXP = Math.floor(xp * mult.mult);
+        const timeLeft = getTimeLeftStr(task);
 
-            const ring = document.getElementById('level-ring-progress');
-            const circumference = 2 * Math.PI * 57;
-            const offset = circumference - (progressPercent / 100) * circumference;
-            ring.style.strokeDashoffset = offset;
+        const weekBadges = task.frequency==='weekly' && task.weekdays ?
+            `<div class="task-days mt-1">${task.weekdays.map(d=>`<span class="task-day-badge">${DAY_NAMES[d]}</span>`).join('')}</div>` : '';
 
-            document.getElementById('stat-intelligence').textContent = state.categoryXP.Intelligence;
-            document.getElementById('stat-strength').textContent = state.categoryXP.Strength;
-            document.getElementById('stat-discipline').textContent = state.categoryXP.Discipline;
-        }
+        const dueDateStr = task.frequency==='monthly' && task.dueDate ?
+            `<span class="text-xs text-slate-500 ml-1">${new Date(task.dueDate+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>` : '';
 
-        // ============================================
-        // TABS
-        // ============================================
+        const deadlineRow = task.deadline && !done ? `
+            <div class="flex items-center gap-2 mt-1.5">
+                <span class="text-xs text-slate-500">${formatTime(task.deadline)}</span>
+                <div class="deadline-bar flex-1">${dlProg ? `<div class="deadline-fill ${dlProg.cls}" style="width:${dlProg.pct}%"></div>` : ''}</div>
+                <span class="text-xs ${timeLeft==='OVERDUE'?'text-red-400':'text-slate-400'}">${timeLeft}</span>
+            </div>` : '';
 
-        function switchTab(tab) {
-            state.currentTab = tab;
-
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-
-            document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
-            document.getElementById(`tab-${tab}`).classList.add('active');
-        }
-
-        // ============================================
-        // CALENDAR
-        // ============================================
-
-        function renderWeekCalendar() {
-            const today = new Date();
-            const currentDay = today.getDay();
-
-            document.getElementById('current-day').textContent = DAY_NAMES_FULL[currentDay];
-
-            const calendar = document.getElementById('week-calendar');
-            calendar.innerHTML = DAY_NAMES.map((day, index) => `
-                <div class="day-btn ${index === currentDay ? 'selected' : ''}" data-day="${index}">
-                    ${day}
-                </div>
-            `).join('');
-        }
-
-        // ============================================
-        // TASK RENDERING
-        // ============================================
-
-        function getTaskXP(task) {
-            return XP_VALUES[task.difficulty] || 25;
-        }
-
-        function isTaskCompletedToday(taskId) {
-            const today = new Date().toDateString();
-            return state.completedTasks.some(ct =>
-                ct.taskId === taskId && new Date(ct.completedAt).toDateString() === today
-            );
-        }
-
-        function isWeeklyTaskForToday(task) {
-            if (task.frequency !== 'weekly') return true;
-            const today = new Date().getDay();
-            return task.weekdays && task.weekdays.includes(today);
-        }
-
-        function renderTask(task, showCompleted = false) {
-            const xp = getTaskXP(task);
-            const categoryClass = `category-${task.category.toLowerCase()}`;
-            const tagClass = `tag-${task.category.toLowerCase()}`;
-            const difficultyClass = `difficulty-${task.difficulty.toLowerCase()}`;
-            const freqClass = `freq-${task.frequency}`;
-            const isCompleted = isTaskCompletedToday(task.id);
-
-            const weekdayBadges = task.frequency === 'weekly' && task.weekdays ?
-                `<div class="task-days mt-1">
-                    ${task.weekdays.map(d => `<span class="task-day-badge">${DAY_NAMES[d]}</span>`).join('')}
-                </div>` : '';
-
-            return `
-                <div class="cyber-card rounded-xl p-3 ${categoryClass} ${isCompleted && !showCompleted ? 'task-completed' : ''} transition-all duration-300">
-                    <div class="flex items-start gap-3">
-                        ${!showCompleted ? `
-                        <input type="checkbox"
-                            class="checkbox-cyber mt-0.5"
-                            ${isCompleted ? 'checked disabled' : ''}
-                            onchange="toggleTask(${task.id})"
-                            aria-label="Complete task: ${task.title}">
-                        ` : ''}
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 flex-wrap mb-1">
-                                <span class="category-tag ${tagClass}">${task.category.toUpperCase()}</span>
-                                <span class="freq-tag ${freqClass}">${task.frequency.toUpperCase()}</span>
-                                <span class="text-xs ${difficultyClass} font-semibold">${task.difficulty}</span>
-                            </div>
-                            <h3 class="font-semibold text-slate-100 text-sm ${isCompleted && !showCompleted ? 'line-through' : ''}">${task.title}</h3>
-                            ${weekdayBadges}
+        return `
+            <div class="cyber-card rounded-xl p-3 ${catCls} ${done?'task-completed':''} transition-all duration-300">
+                <div class="flex items-start gap-3">
+                    <input type="checkbox" class="checkbox-cyber mt-0.5" ${done?'checked disabled':''}
+                        onchange="toggleTask(${task.id})" aria-label="${task.title}">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 flex-wrap mb-0.5">
+                            <span class="category-tag ${tagCls}">${task.category.toUpperCase()}</span>
+                            <span class="freq-tag ${freqCls}">${task.frequency.toUpperCase()}</span>
+                            <span class="text-xs ${diffCls} font-semibold">${task.difficulty}</span>
+                            ${dueDateStr}
                         </div>
-                        <div class="xp-badge px-2 py-0.5 rounded-full text-xs font-bold text-slate-900 flex-shrink-0">
-                            +${xp} XP
+                        <h3 class="font-semibold text-slate-100 text-sm ${done?'line-through':''}">${task.title}</h3>
+                        ${weekBadges}
+                        ${deadlineRow}
+                    </div>
+                    <div class="flex flex-col items-end gap-1 flex-shrink-0">
+                        ${!done ? `<span class="multiplier-badge ${mult.cls}">${mult.label}</span>` : ''}
+                        <div class="xp-badge px-2 py-0.5 rounded-full text-xs font-bold text-slate-900">
+                            ${done ? `+${xp}` : `+${bonusXP}`} XP
                         </div>
                     </div>
                 </div>
-            `;
-        }
+            </div>`;
+    }
 
-        function renderCompletedTask(completedTask) {
-            const categoryClass = `category-${completedTask.category.toLowerCase()}`;
-            const tagClass = `tag-${completedTask.category.toLowerCase()}`;
-            const freqClass = `freq-${completedTask.frequency}`;
-            const timestamp = new Date(completedTask.completedAt).toLocaleString();
+    function renderCompletedTask(ct) {
+        const catCls = `category-${ct.category.toLowerCase()}`;
+        const tagCls = `tag-${ct.category.toLowerCase()}`;
+        const freqCls = `freq-${ct.frequency}`;
+        const ts = new Date(ct.completedAt).toLocaleString();
+        const hasBonus = ct.bonusXP && ct.bonusXP > ct.baseXP;
 
-            return `
-                <div class="cyber-card rounded-xl p-3 ${categoryClass} task-completed transition-all duration-300">
-                    <div class="flex items-start gap-3">
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 flex-wrap mb-1">
-                                <span class="category-tag ${tagClass}">${completedTask.category.toUpperCase()}</span>
-                                <span class="freq-tag ${freqClass}">${completedTask.frequency.toUpperCase()}</span>
-                            </div>
-                            <h3 class="font-semibold text-slate-100 text-sm line-through">${completedTask.title}</h3>
-                            <p class="completed-timestamp">${timestamp}</p>
+        return `
+            <div class="cyber-card rounded-xl p-3 ${catCls} task-completed transition-all duration-300">
+                <div class="flex items-start gap-3">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 flex-wrap mb-0.5">
+                            <span class="category-tag ${tagCls}">${ct.category.toUpperCase()}</span>
+                            <span class="freq-tag ${freqCls}">${ct.frequency.toUpperCase()}</span>
+                            ${ct.multiplier && ct.multiplier !== '1x' ? `<span class="multiplier-badge ${ct.multCls||'mult-1x'}">${ct.multiplier}</span>` : ''}
                         </div>
-                        <div class="xp-badge px-2 py-0.5 rounded-full text-xs font-bold text-slate-900 flex-shrink-0">
-                            +${completedTask.xp} XP
-                        </div>
+                        <h3 class="font-semibold text-slate-100 text-sm line-through">${ct.title}</h3>
+                        <p class="completed-timestamp">${ts}</p>
+                    </div>
+                    <div class="flex flex-col items-end gap-0.5 flex-shrink-0">
+                        ${hasBonus ? `<div class="bonus-badge px-2 py-0.5 rounded-full text-xs font-bold text-slate-900">+${ct.bonusXP} XP</div>` :
+                        `<div class="xp-badge px-2 py-0.5 rounded-full text-xs font-bold text-slate-900">+${ct.bonusXP||ct.xp} XP</div>`}
                     </div>
                 </div>
-            `;
-        }
+            </div>`;
+    }
 
-        function renderTasks() {
-            const today = new Date().getDay();
+    function renderTasks() {
+        const daily = state.tasks.filter(t=>t.frequency==='daily');
+        const weekly = state.tasks.filter(t=>t.frequency==='weekly'&&isWeeklyTaskForToday(t));
+        const monthly = state.tasks.filter(t=>t.frequency==='monthly');
+        const completed = [...state.completedTasks].reverse().slice(0,30);
 
-            // Filter tasks by frequency
-            const dailyTasks = state.tasks.filter(t => t.frequency === 'daily');
-            const weeklyTasks = state.tasks.filter(t => t.frequency === 'weekly' && isWeeklyTaskForToday(t));
-            const monthlyTasks = state.tasks.filter(t => t.frequency === 'monthly');
-            const completedTasks = [...state.completedTasks].reverse().slice(0, 30);
+        renderSection('daily-tasks','no-daily-tasks', daily);
+        renderSection('weekly-tasks','no-weekly-tasks', weekly);
+        renderSection('monthly-tasks','no-monthly-tasks', monthly);
 
-            // Render Daily
-            const dailyContainer = document.getElementById('daily-tasks');
-            const noDailyMsg = document.getElementById('no-daily-tasks');
-            if (dailyTasks.length > 0) {
-                dailyContainer.innerHTML = dailyTasks.map(t => renderTask(t)).join('');
-                noDailyMsg.classList.add('hidden');
-            } else {
-                dailyContainer.innerHTML = '';
-                noDailyMsg.classList.remove('hidden');
-            }
+        const cc = document.getElementById('completed-tasks');
+        const nc = document.getElementById('no-completed-tasks');
+        if (completed.length > 0) { cc.innerHTML = completed.map(renderCompletedTask).join(''); nc.classList.add('hidden'); }
+        else { cc.innerHTML = ''; nc.classList.remove('hidden'); }
 
-            // Render Weekly
-            const weeklyContainer = document.getElementById('weekly-tasks');
-            const noWeeklyMsg = document.getElementById('no-weekly-tasks');
-            if (weeklyTasks.length > 0) {
-                weeklyContainer.innerHTML = weeklyTasks.map(t => renderTask(t)).join('');
-                noWeeklyMsg.classList.add('hidden');
-            } else {
-                weeklyContainer.innerHTML = '';
-                noWeeklyMsg.classList.remove('hidden');
-            }
+        const da = daily.filter(t=>!isTaskCompletedToday(t.id)).length;
+        const wa = weekly.filter(t=>!isTaskCompletedToday(t.id)).length;
+        const ma = monthly.filter(t=>!isTaskCompletedToday(t.id)).length;
+        document.getElementById('daily-count').textContent=`(${da}/${daily.length})`;
+        document.getElementById('weekly-count').textContent=`(${wa}/${weekly.length})`;
+        document.getElementById('monthly-count').textContent=`(${ma}/${monthly.length})`;
+        document.getElementById('completed-count').textContent=`(${completed.length})`;
+        lucide.createIcons();
+    }
 
-            // Render Monthly
-            const monthlyContainer = document.getElementById('monthly-tasks');
-            const noMonthlyMsg = document.getElementById('no-monthly-tasks');
-            if (monthlyTasks.length > 0) {
-                monthlyContainer.innerHTML = monthlyTasks.map(t => renderTask(t)).join('');
-                noMonthlyMsg.classList.add('hidden');
-            } else {
-                monthlyContainer.innerHTML = '';
-                noMonthlyMsg.classList.remove('hidden');
-            }
+    function renderSection(containerId, emptyId, tasks) {
+        const c = document.getElementById(containerId);
+        const n = document.getElementById(emptyId);
+        if (tasks.length > 0) { c.innerHTML = tasks.map(renderTask).join(''); n.classList.add('hidden'); }
+        else { c.innerHTML = ''; n.classList.remove('hidden'); }
+    }
 
-            // Render Completed
-            const completedContainer = document.getElementById('completed-tasks');
-            const noCompletedMsg = document.getElementById('no-completed-tasks');
-            if (completedTasks.length > 0) {
-                completedContainer.innerHTML = completedTasks.map(t => renderCompletedTask(t)).join('');
-                noCompletedMsg.classList.add('hidden');
-            } else {
-                completedContainer.innerHTML = '';
-                noCompletedMsg.classList.remove('hidden');
-            }
+    // ============================================
+    // TASK ACTIONS
+    // ============================================
+    function toggleTask(taskId) {
+        const task = state.tasks.find(t=>t.id===taskId);
+        if (!task || isTaskCompletedToday(taskId)) return;
 
-            // Update counts
-            const dailyActive = dailyTasks.filter(t => !isTaskCompletedToday(t.id)).length;
-            const weeklyActive = weeklyTasks.filter(t => !isTaskCompletedToday(t.id)).length;
-            const monthlyActive = monthlyTasks.filter(t => !isTaskCompletedToday(t.id)).length;
+        const prevLvl = calculateLevel(state.totalXP);
+        const baseXP = getTaskXP(task);
+        const mult = getTimeMultiplier(task);
+        const bonusXP = Math.floor(baseXP * mult.mult);
 
-            document.getElementById('daily-count').textContent = `(${dailyActive}/${dailyTasks.length})`;
-            document.getElementById('weekly-count').textContent = `(${weeklyActive}/${weeklyTasks.length})`;
-            document.getElementById('monthly-count').textContent = `(${monthlyActive}/${monthlyTasks.length})`;
-            document.getElementById('completed-count').textContent = `(${completedTasks.length})`;
-
-            lucide.createIcons();
-        }
-
-        // ============================================
-        // TASK ACTIONS
-        // ============================================
-
-        function toggleTask(taskId) {
-            const task = state.tasks.find(t => t.id === taskId);
-            if (!task || isTaskCompletedToday(taskId)) return;
-
-            const prevLevel = calculateLevel(state.totalXP);
-            const xp = getTaskXP(task);
-
-            // Add to completed tasks
-            state.completedTasks.push({
-                taskId: task.id,
-                title: task.title,
-                category: task.category,
-                difficulty: task.difficulty,
-                frequency: task.frequency,
-                xp: xp,
-                completedAt: new Date().toISOString()
-            });
-
-            // Keep only last 30
-            if (state.completedTasks.length > 30) {
-                state.completedTasks = state.completedTasks.slice(-30);
-            }
-
-            state.totalXP += xp;
-            state.categoryXP[task.category] += xp;
-
-            const newLevel = calculateLevel(state.totalXP);
-            triggerConfetti(newLevel > prevLevel);
-
-            saveState();
-            renderTasks();
-            updateLevelDisplay();
-        }
-
-        function triggerConfetti(isLevelUp) {
-            const defaults = {
-                spread: 60,
-                ticks: 100,
-                gravity: 1,
-                decay: 0.94,
-                startVelocity: 30,
-                colors: ['#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#38bdf8', '#f472b6']
-            };
-
-            if (isLevelUp) {
-                const duration = 2000;
-                const end = Date.now() + duration;
-                (function frame() {
-                    confetti({ ...defaults, particleCount: 7, origin: { x: Math.random(), y: Math.random() - 0.2 } });
-                    if (Date.now() < end) requestAnimationFrame(frame);
-                }());
-            } else {
-                confetti({ ...defaults, particleCount: 30, origin: { x: 0.5, y: 0.7 } });
-            }
-        }
-
-        // ============================================
-        // RESET FUNCTIONS
-        // ============================================
-
-        function resetTasks() {
-            document.getElementById('reset-modal').classList.remove('hidden');
-            document.getElementById('reset-modal').classList.add('flex');
-        }
-
-        function closeResetModal() {
-            document.getElementById('reset-modal').classList.add('hidden');
-            document.getElementById('reset-modal').classList.remove('flex');
-        }
-
-        function resetByFrequency(frequency) {
-            const today = new Date().toDateString();
-
-            if (frequency === 'all') {
-                state.completedTasks = state.completedTasks.filter(ct =>
-                    new Date(ct.completedAt).toDateString() !== today
-                );
-            } else {
-                state.completedTasks = state.completedTasks.filter(ct =>
-                    !(ct.frequency === frequency && new Date(ct.completedAt).toDateString() === today)
-                );
-            }
-
-            saveState();
-            renderTasks();
-            closeResetModal();
-        }
-
-        // ============================================
-        // ADD TASK MODAL
-        // ============================================
-
-        function openAddTaskModal() {
-            document.getElementById('add-task-modal').classList.remove('hidden');
-            document.getElementById('add-task-modal').classList.add('flex');
-            document.getElementById('task-title').focus();
-            toggleWeeklyDays();
-        }
-
-        function closeAddTaskModal() {
-            document.getElementById('add-task-modal').classList.add('hidden');
-            document.getElementById('add-task-modal').classList.remove('flex');
-            document.getElementById('task-title').value = '';
-            document.getElementById('task-frequency').value = 'daily';
-            document.querySelectorAll('input[name="weekday"]').forEach(cb => {
-                cb.checked = false;
-                cb.parentElement.classList.remove('selected');
-            });
-            toggleWeeklyDays();
-        }
-
-        function toggleWeeklyDays() {
-            const frequency = document.getElementById('task-frequency').value;
-            const selector = document.getElementById('weekly-days-selector');
-            selector.classList.toggle('hidden', frequency !== 'weekly');
-        }
-
-        // Day selector toggle
-        document.querySelectorAll('#weekly-days-selector .day-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const checkbox = this.querySelector('input[type="checkbox"]');
-                checkbox.checked = !checkbox.checked;
-                this.classList.toggle('selected', checkbox.checked);
-            });
+        state.completedTasks.push({
+            taskId:task.id, title:task.title, category:task.category,
+            difficulty:task.difficulty, frequency:task.frequency,
+            xp:baseXP, baseXP:baseXP, bonusXP:bonusXP,
+            multiplier:mult.label, multCls:mult.cls,
+            completedAt:new Date().toISOString()
         });
+        if (state.completedTasks.length > 30) state.completedTasks = state.completedTasks.slice(-30);
 
-        function addCustomTask(event) {
-            event.preventDefault();
+        state.totalXP += bonusXP;
+        state.categoryXP[task.category] += bonusXP;
 
-            const title = document.getElementById('task-title').value.trim();
-            const category = document.getElementById('task-category').value;
-            const frequency = document.getElementById('task-frequency').value;
-            const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
+        const newLvl = calculateLevel(state.totalXP);
+        triggerConfetti(newLvl > prevLvl, mult.mult);
+        saveState(); renderTasks(); updateLevelDisplay();
+    }
 
-            if (!title) return;
+    function triggerConfetti(levelUp, multiplier) {
+        const colors = ['#10b981','#34d399','#6ee7b7','#a7f3d0','#38bdf8','#f472b6'];
+        if (multiplier >= 3) colors.push('#fbbf24','#f59e0b','#fde047');
+        const defaults = {spread:60,ticks:100,gravity:1,decay:.94,startVelocity:30,colors};
+        if (levelUp) {
+            const end = Date.now()+2500;
+            (function f(){confetti({...defaults,particleCount:8,origin:{x:Math.random(),y:Math.random()-.2}});if(Date.now()<end)requestAnimationFrame(f)}());
+        } else {
+            const count = multiplier >= 2 ? 60 : 30;
+            confetti({...defaults,particleCount:count,origin:{x:.5,y:.7}});
+        }
+    }
 
-            const newTask = {
-                id: state.nextTaskId++,
-                title,
-                category,
-                difficulty,
-                frequency
-            };
+    // ============================================
+    // RESETS
+    // ============================================
+    function resetTasks() { document.getElementById('reset-modal').classList.remove('hidden'); document.getElementById('reset-modal').classList.add('flex'); }
+    function closeResetModal() { document.getElementById('reset-modal').classList.add('hidden'); document.getElementById('reset-modal').classList.remove('flex'); }
+    function resetByFrequency(freq) {
+        const today = new Date().toDateString();
+        if (freq==='all') state.completedTasks = state.completedTasks.filter(ct=>new Date(ct.completedAt).toDateString()!==today);
+        else state.completedTasks = state.completedTasks.filter(ct=>!(ct.frequency===freq&&new Date(ct.completedAt).toDateString()===today));
+        saveState(); renderTasks(); closeResetModal();
+    }
 
-            // Add weekdays for weekly tasks
-            if (frequency === 'weekly') {
-                const selectedDays = Array.from(document.querySelectorAll('input[name="weekday"]:checked'))
-                    .map(cb => parseInt(cb.value));
-                if (selectedDays.length === 0) {
-                    alert('Please select at least one day for weekly tasks.');
-                    return;
-                }
-                newTask.weekdays = selectedDays;
-            }
+    // ============================================
+    // ADD TASK MODAL
+    // ============================================
+    function openAddTaskModal() {
+        document.getElementById('add-task-modal').classList.remove('hidden');
+        document.getElementById('add-task-modal').classList.add('flex');
+        document.getElementById('task-title').focus();
+        calViewDate = new Date(); selectedCalDate = null;
+        onFrequencyChange();
+        renderModalCalendar();
+        lucide.createIcons();
+    }
+    function closeAddTaskModal() {
+        document.getElementById('add-task-modal').classList.add('hidden');
+        document.getElementById('add-task-modal').classList.remove('flex');
+        document.getElementById('task-title').value='';
+        document.getElementById('task-frequency').value='daily';
+        document.getElementById('task-deadline').value='23:59';
+        document.getElementById('task-due-date').value='';
+        selectedCalDate = null;
+        document.querySelectorAll('input[name="weekday"]').forEach(cb=>{cb.checked=false;cb.parentElement.classList.remove('selected')});
+        onFrequencyChange();
+    }
+    function onFrequencyChange() {
+        const freq = document.getElementById('task-frequency').value;
+        document.getElementById('weekly-days-selector').classList.toggle('hidden', freq!=='weekly');
+        document.getElementById('monthly-date-selector').classList.toggle('hidden', freq!=='monthly');
+        if (freq==='monthly') { renderModalCalendar(); lucide.createIcons(); }
+    }
 
-            state.tasks.push(newTask);
-            saveState();
-            renderTasks();
-            closeAddTaskModal();
+    // Day selector toggle in modal
+    document.querySelectorAll('#modal-day-selector .day-btn').forEach(btn=>{
+        btn.addEventListener('click',function(){
+            const cb=this.querySelector('input[type="checkbox"]');
+            cb.checked=!cb.checked;
+            this.classList.toggle('selected',cb.checked);
+        });
+    });
 
-            // Switch to appropriate tab
-            switchTab(frequency);
+    function addCustomTask(event) {
+        event.preventDefault();
+        const title = document.getElementById('task-title').value.trim();
+        const category = document.getElementById('task-category').value;
+        const frequency = document.getElementById('task-frequency').value;
+        const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
+        const deadline = document.getElementById('task-deadline').value || '23:59';
+        if (!title) return;
 
-            confetti({
-                particleCount: 15,
-                spread: 40,
-                origin: { x: 0.5, y: 0.6 },
-                colors: ['#10b981', '#34d399']
-            });
+        const newTask = { id:state.nextTaskId++, title, category, difficulty, frequency, deadline };
+
+        if (frequency==='weekly') {
+            const days = Array.from(document.querySelectorAll('input[name="weekday"]:checked')).map(c=>parseInt(c.value));
+            if (days.length===0) { alert('Select at least one day.'); return; }
+            newTask.weekdays = days;
+        }
+        if (frequency==='monthly') {
+            const dueDate = document.getElementById('task-due-date').value;
+            newTask.dueDate = dueDate || null;
         }
 
-        // Close modals on backdrop click
-        document.getElementById('add-task-modal').addEventListener('click', function(e) {
-            if (e.target === this) closeAddTaskModal();
-        });
+        state.tasks.push(newTask);
+        saveState(); renderTasks(); closeAddTaskModal(); switchTab(frequency);
+        confetti({particleCount:15,spread:40,origin:{x:.5,y:.6},colors:['#10b981','#34d399']});
+    }
 
-        document.getElementById('reset-modal').addEventListener('click', function(e) {
-            if (e.target === this) closeResetModal();
-        });
+    // Modal backdrop clicks
+    document.getElementById('add-task-modal').addEventListener('click',function(e){if(e.target===this)closeAddTaskModal()});
+    document.getElementById('reset-modal').addEventListener('click',function(e){if(e.target===this)closeResetModal()});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeAddTaskModal();closeResetModal()}});
 
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeAddTaskModal();
-                closeResetModal();
-            }
-        });
+    // ============================================
+    // LIVE TIMER - update deadlines every 30s
+    // ============================================
+    setInterval(()=>{ renderTasks(); }, 30000);
 
-        // ============================================
-        // INITIALIZATION
-        // ============================================
-
-        function init() {
-            loadState();
-            renderWeekCalendar();
-            renderTasks();
-            updateLevelDisplay();
-            lucide.createIcons();
-        }
-
-        document.addEventListener('DOMContentLoaded', init);
+    // ============================================
+    // INIT
+    // ============================================
+    function init() {
+        loadState(); renderWeekCalendar(); renderTasks(); updateLevelDisplay(); lucide.createIcons();
+    }
+    document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
