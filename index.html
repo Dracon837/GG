@@ -112,6 +112,12 @@
         .streak-bonus-active { background:linear-gradient(135deg,rgba(251,146,60,.2),rgba(239,68,68,.15)); border:1px solid rgba(251,146,60,.4); }
         @keyframes flame-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
         .streak-display.active .streak-flame { animation:flame-pulse 1.5s ease-in-out infinite; }
+
+        .task-locked { opacity:.6; filter:grayscale(60%); }
+        .task-locked .checkbox-cyber { cursor:not-allowed; border-color:#475569; }
+        .task-locked .checkbox-cyber:hover { box-shadow:none; }
+        .lock-icon { color:#f59e0b; filter:drop-shadow(0 0 3px rgba(245,158,11,.4)); }
+        .chain-badge { font-size:.6rem; padding:1px 5px; border-radius:3px; font-weight:600; background:rgba(245,158,11,.15); color:#fbbf24; display:inline-flex; align-items:center; gap:2px; }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100 grid-bg">
@@ -307,6 +313,15 @@
                         <input type="time" id="task-deadline" class="flex-1 bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none text-sm" value="23:59">
                         <div class="text-xs text-slate-500 flex-shrink-0">Complete early<br>for bonus XP!</div>
                     </div>
+                </div>
+
+                <!-- Quest Chain / Dependency -->
+                <div class="mb-4">
+                    <label class="block text-sm text-slate-400 mb-2">Requires Completion of...</label>
+                    <select id="task-depends-on" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none text-sm">
+                        <option value="">None (Independent Quest)</option>
+                    </select>
+                    <p class="text-xs text-slate-500 mt-1"><i data-lucide="link" class="w-3 h-3 inline"></i> Chain this quest to unlock after completing another</p>
                 </div>
 
                 <!-- Difficulty -->
@@ -681,6 +696,17 @@
         return false;
     }
 
+    function isTaskLocked(task) {
+        if (!task.dependsOn) return false;
+        return !isTaskCompletedToday(task.dependsOn);
+    }
+
+    function getParentTaskTitle(task) {
+        if (!task.dependsOn) return null;
+        const parent = state.tasks.find(t => t.id === task.dependsOn);
+        return parent ? parent.title : null;
+    }
+
     // ============================================
     // RENDER TASKS
     // ============================================
@@ -691,6 +717,8 @@
         const diffCls = `difficulty-${task.difficulty.toLowerCase()}`;
         const freqCls = `freq-${task.frequency}`;
         const done = isTaskCompletedToday(task.id);
+        const locked = isTaskLocked(task);
+        const parentTitle = getParentTaskTitle(task);
         const mult = getTimeMultiplier(task);
         const streakMult = getStreakMultiplier();
         const dlProg = getDeadlineProgress(task);
@@ -703,33 +731,39 @@
         const dueDateStr = task.frequency==='monthly' && task.dueDate ?
             `<span class="text-xs text-slate-500 ml-1">${new Date(task.dueDate+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>` : '';
 
-        const deadlineRow = task.deadline && !done ? `
+        const deadlineRow = task.deadline && !done && !locked ? `
             <div class="flex items-center gap-2 mt-1.5">
                 <span class="text-xs text-slate-500">${formatTime(task.deadline)}</span>
                 <div class="deadline-bar flex-1">${dlProg ? `<div class="deadline-fill ${dlProg.cls}" style="width:${dlProg.pct}%"></div>` : ''}</div>
                 <span class="text-xs ${timeLeft==='OVERDUE'?'text-red-400':'text-slate-400'}">${timeLeft}</span>
             </div>` : '';
 
+        const chainBadge = task.dependsOn ? `<span class="chain-badge"><i data-lucide="link" class="w-3 h-3"></i>Chain</span>` : '';
+        const lockIndicator = locked ? `<i data-lucide="lock" class="w-3.5 h-3.5 lock-icon inline ml-1"></i>` : '';
+        const lockedInfo = locked && parentTitle ? `<p class="text-xs text-amber-400/70 mt-1"><i data-lucide="info" class="w-3 h-3 inline"></i> Complete "${parentTitle}" first</p>` : '';
+
         return `
-            <div class="cyber-card rounded-xl p-3 ${catCls} ${done?'task-completed':''} transition-all duration-300">
+            <div class="cyber-card rounded-xl p-3 ${catCls} ${done?'task-completed':''} ${locked?'task-locked':''} transition-all duration-300">
                 <div class="flex items-start gap-3">
-                    <input type="checkbox" class="checkbox-cyber mt-0.5" ${done?'checked disabled':''}
+                    <input type="checkbox" class="checkbox-cyber mt-0.5" ${done?'checked disabled':''} ${locked?'disabled':''}
                         onchange="toggleTask(${task.id})" aria-label="${task.title}">
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2 flex-wrap mb-0.5">
                             <span class="category-tag ${tagCls}">${task.category.toUpperCase()}</span>
                             <span class="freq-tag ${freqCls}">${task.frequency.toUpperCase()}</span>
                             <span class="text-xs ${diffCls} font-semibold">${task.difficulty}</span>
+                            ${chainBadge}
                             ${dueDateStr}
                         </div>
-                        <h3 class="font-semibold text-slate-100 text-sm ${done?'line-through':''}">${task.title}</h3>
+                        <h3 class="font-semibold text-slate-100 text-sm ${done?'line-through':''}">${task.title}${lockIndicator}</h3>
+                        ${lockedInfo}
                         ${weekBadges}
                         ${deadlineRow}
                     </div>
                     <div class="flex flex-col items-end gap-1 flex-shrink-0">
                         <div class="flex items-center gap-1">
-                            ${!done ? `<span class="multiplier-badge ${mult.cls}">${mult.label}</span>` : ''}
-                            ${!done && streakMult > 1 ? `<span class="multiplier-badge" style="background:rgba(251,146,60,.2);color:#fb923c"><i data-lucide="flame" class="w-3 h-3 inline"></i>1.2x</span>` : ''}
+                            ${!done && !locked ? `<span class="multiplier-badge ${mult.cls}">${mult.label}</span>` : ''}
+                            ${!done && !locked && streakMult > 1 ? `<span class="multiplier-badge" style="background:rgba(251,146,60,.2);color:#fb923c"><i data-lucide="flame" class="w-3 h-3 inline"></i>1.2x</span>` : ''}
                         </div>
                         <div class="xp-badge px-2 py-0.5 rounded-full text-xs font-bold text-slate-900">
                             ${done ? `+${xp}` : `+${bonusXP}`} XP
@@ -810,7 +844,7 @@
     // ============================================
     function toggleTask(taskId) {
         const task = state.tasks.find(t=>t.id===taskId);
-        if (!task || isTaskCompletedToday(taskId)) return;
+        if (!task || isTaskCompletedToday(taskId) || isTaskLocked(task)) return;
 
         const prevLvl = calculateLevel(state.totalXP);
         const baseXP = getTaskXP(task);
@@ -953,7 +987,19 @@
         calViewDate = new Date(); selectedCalDate = null;
         onFrequencyChange();
         renderModalCalendar();
+        populateDependsOnDropdown();
         lucide.createIcons();
+    }
+
+    function populateDependsOnDropdown() {
+        const select = document.getElementById('task-depends-on');
+        select.innerHTML = '<option value="">None (Independent Quest)</option>';
+        state.tasks.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t.id;
+            opt.textContent = `${t.title} (${t.frequency})`;
+            select.appendChild(opt);
+        });
     }
     function closeAddTaskModal() {
         document.getElementById('add-task-modal').classList.add('hidden');
@@ -962,6 +1008,7 @@
         document.getElementById('task-frequency').value='daily';
         document.getElementById('task-deadline').value='23:59';
         document.getElementById('task-due-date').value='';
+        document.getElementById('task-depends-on').value='';
         selectedCalDate = null;
         document.querySelectorAll('input[name="weekday"]').forEach(cb=>{cb.checked=false;cb.parentElement.classList.remove('selected')});
         onFrequencyChange();
@@ -989,9 +1036,14 @@
         const frequency = document.getElementById('task-frequency').value;
         const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
         const deadline = document.getElementById('task-deadline').value || '23:59';
+        const dependsOnVal = document.getElementById('task-depends-on').value;
         if (!title) return;
 
         const newTask = { id:state.nextTaskId++, title, category, difficulty, frequency, deadline };
+
+        if (dependsOnVal) {
+            newTask.dependsOn = parseInt(dependsOnVal);
+        }
 
         if (frequency==='weekly') {
             const days = Array.from(document.querySelectorAll('input[name="weekday"]:checked')).map(c=>parseInt(c.value));
