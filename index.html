@@ -118,6 +118,17 @@
         .task-locked .checkbox-cyber:hover { box-shadow:none; }
         .lock-icon { color:#f59e0b; filter:drop-shadow(0 0 3px rgba(245,158,11,.4)); }
         .chain-badge { font-size:.6rem; padding:1px 5px; border-radius:3px; font-weight:600; background:rgba(245,158,11,.15); color:#fbbf24; display:inline-flex; align-items:center; gap:2px; }
+
+        .urgent-badge { font-size:.55rem; padding:1px 4px; border-radius:3px; font-weight:700; background:rgba(239,68,68,.2); color:#f87171; text-transform:uppercase; letter-spacing:.3px; animation:urgent-pulse 2s ease-in-out infinite; }
+        @keyframes urgent-pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+        .deadline-urgent { color:#f87171 !important; font-weight:600; }
+
+        .chain-block { border:1px solid rgba(245,158,11,.2); border-radius:.75rem; padding:.5rem; margin-bottom:.75rem; background:rgba(245,158,11,.03); }
+        .chain-block-header { font-size:.65rem; color:#fbbf24; font-weight:600; text-transform:uppercase; letter-spacing:.5px; margin-bottom:.5rem; padding-left:.25rem; display:flex; align-items:center; gap:.35rem; }
+        .chain-block .cyber-card { margin-bottom:.5rem; }
+        .chain-block .cyber-card:last-child { margin-bottom:0; }
+        .chain-child { margin-left:1rem; border-left:2px solid rgba(245,158,11,.3); padding-left:.5rem; }
+        .chain-grandchild { margin-left:1rem; }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100 grid-bg">
@@ -708,9 +719,77 @@
     }
 
     // ============================================
+    // CHAIN SORTING & HIERARCHY
+    // ============================================
+    function isDeadlineUrgent(task) {
+        const dl = getTaskDeadlineToday(task);
+        if (!dl) return false;
+        const diff = dl.getTime() - Date.now();
+        return diff > 0 && diff <= 24 * 60 * 60 * 1000;
+    }
+
+    function getDeadlineSortKey(task) {
+        if (!task.deadline) return Infinity;
+        const [h, m] = task.deadline.split(':').map(Number);
+        return h * 60 + m;
+    }
+
+    function buildTaskHierarchy(tasks) {
+        const taskMap = new Map();
+        tasks.forEach(t => taskMap.set(t.id, t));
+
+        // Find root tasks (no dependency, or dependency not in this list)
+        const roots = [];
+        const childrenMap = new Map(); // parentId -> [child tasks]
+
+        tasks.forEach(t => {
+            if (t.dependsOn && taskMap.has(t.dependsOn)) {
+                if (!childrenMap.has(t.dependsOn)) childrenMap.set(t.dependsOn, []);
+                childrenMap.get(t.dependsOn).push(t);
+            } else {
+                roots.push(t);
+            }
+        });
+
+        // Recursively sort children by deadline at every level
+        function sortChildren(parentId) {
+            const children = childrenMap.get(parentId) || [];
+            children.sort((a, b) => getDeadlineSortKey(a) - getDeadlineSortKey(b));
+            children.forEach(c => sortChildren(c.id));
+            return children;
+        }
+
+        // Sort roots by deadline too
+        roots.sort((a, b) => getDeadlineSortKey(a) - getDeadlineSortKey(b));
+
+        // Build tree nodes
+        function buildNode(task, depth) {
+            const children = sortChildren(task.id);
+            return {
+                task,
+                depth,
+                children: children.map(c => buildNode(c, depth + 1))
+            };
+        }
+
+        return roots.map(r => buildNode(r, 0));
+    }
+
+    function flattenHierarchy(tree) {
+        const result = [];
+        function walk(node) {
+            result.push({ task: node.task, depth: node.depth });
+            node.children.forEach(walk);
+        }
+        tree.forEach(walk);
+        return result;
+    }
+
+    // ============================================
     // RENDER TASKS
     // ============================================
-    function renderTask(task) {
+    function renderTask(task, depth) {
+        depth = depth || 0;
         const xp = getTaskXP(task);
         const catCls = `category-${task.category.toLowerCase()}`;
         const tagCls = `tag-${task.category.toLowerCase()}`;
@@ -724,6 +803,7 @@
         const dlProg = getDeadlineProgress(task);
         const bonusXP = Math.floor(xp * mult.mult * streakMult);
         const timeLeft = getTimeLeftStr(task);
+        const urgent = !done && !locked && isDeadlineUrgent(task);
 
         const weekBadges = task.frequency==='weekly' && task.weekdays ?
             `<div class="task-days mt-1">${task.weekdays.map(d=>`<span class="task-day-badge">${DAY_NAMES[d]}</span>`).join('')}</div>` : '';
@@ -731,9 +811,12 @@
         const dueDateStr = task.frequency==='monthly' && task.dueDate ?
             `<span class="text-xs text-slate-500 ml-1">${new Date(task.dueDate+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>` : '';
 
+        const urgentBadge = urgent ? '<span class="urgent-badge">Urgent</span>' : '';
+        const deadlineTextCls = urgent ? 'deadline-urgent' : 'text-slate-500';
+
         const deadlineRow = task.deadline && !done && !locked ? `
             <div class="flex items-center gap-2 mt-1.5">
-                <span class="text-xs text-slate-500">${formatTime(task.deadline)}</span>
+                <span class="text-xs ${deadlineTextCls}">${formatTime(task.deadline)}</span>
                 <div class="deadline-bar flex-1">${dlProg ? `<div class="deadline-fill ${dlProg.cls}" style="width:${dlProg.pct}%"></div>` : ''}</div>
                 <span class="text-xs ${timeLeft==='OVERDUE'?'text-red-400':'text-slate-400'}">${timeLeft}</span>
             </div>` : '';
@@ -742,8 +825,10 @@
         const lockIndicator = locked ? `<i data-lucide="lock" class="w-3.5 h-3.5 lock-icon inline ml-1"></i>` : '';
         const lockedInfo = locked && parentTitle ? `<p class="text-xs text-amber-400/70 mt-1"><i data-lucide="info" class="w-3 h-3 inline"></i> Complete "${parentTitle}" first</p>` : '';
 
+        const depthCls = depth === 1 ? 'chain-child' : depth >= 2 ? 'chain-child chain-grandchild' : '';
+
         return `
-            <div class="cyber-card rounded-xl p-3 ${catCls} ${done?'task-completed':''} ${locked?'task-locked':''} transition-all duration-300">
+            <div class="cyber-card rounded-xl p-3 ${catCls} ${done?'task-completed':''} ${locked?'task-locked':''} ${depthCls} transition-all duration-300">
                 <div class="flex items-start gap-3">
                     <input type="checkbox" class="checkbox-cyber mt-0.5" ${done?'checked disabled':''} ${locked?'disabled':''}
                         onchange="toggleTask(${task.id})" aria-label="${task.title}">
@@ -753,6 +838,7 @@
                             <span class="freq-tag ${freqCls}">${task.frequency.toUpperCase()}</span>
                             <span class="text-xs ${diffCls} font-semibold">${task.difficulty}</span>
                             ${chainBadge}
+                            ${urgentBadge}
                             ${dueDateStr}
                         </div>
                         <h3 class="font-semibold text-slate-100 text-sm ${done?'line-through':''}">${task.title}${lockIndicator}</h3>
@@ -835,8 +921,32 @@
     function renderSection(containerId, emptyId, tasks) {
         const c = document.getElementById(containerId);
         const n = document.getElementById(emptyId);
-        if (tasks.length > 0) { c.innerHTML = tasks.map(renderTask).join(''); n.classList.add('hidden'); }
-        else { c.innerHTML = ''; n.classList.remove('hidden'); }
+        if (tasks.length === 0) { c.innerHTML = ''; n.classList.remove('hidden'); return; }
+        n.classList.add('hidden');
+
+        const tree = buildTaskHierarchy(tasks);
+        let html = '';
+
+        function renderNodeChildren(children) {
+            children.forEach(child => {
+                html += renderTask(child.task, child.depth);
+                if (child.children.length > 0) renderNodeChildren(child.children);
+            });
+        }
+
+        tree.forEach(node => {
+            if (node.children.length > 0) {
+                html += `<div class="chain-block">`;
+                html += `<div class="chain-block-header"><i data-lucide="link" class="w-3.5 h-3.5"></i> Quest Chain</div>`;
+                html += renderTask(node.task, 0);
+                renderNodeChildren(node.children);
+                html += `</div>`;
+            } else {
+                html += renderTask(node.task, 0);
+            }
+        });
+
+        c.innerHTML = html;
     }
 
     // ============================================
