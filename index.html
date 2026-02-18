@@ -752,6 +752,7 @@
         });
 
         // Recursively sort children by deadline at every level
+        // Parent stays as anchor, only children among themselves are sorted
         function sortChildren(parentId) {
             const children = childrenMap.get(parentId) || [];
             children.sort((a, b) => getDeadlineSortKey(a) - getDeadlineSortKey(b));
@@ -759,8 +760,8 @@
             return children;
         }
 
-        // Sort roots by deadline too
-        roots.sort((a, b) => getDeadlineSortKey(a) - getDeadlineSortKey(b));
+        // Do NOT sort roots - they maintain original order as anchors
+        // Only children within each chain are sorted by deadline
 
         // Build tree nodes
         function buildNode(task, depth) {
